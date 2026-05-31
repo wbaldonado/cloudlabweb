@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - CloudLab Latam</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background: #1e3a8a;
+            color: white;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 10px;
+        }
+        h1 { color: #22d3ee; }
+        .correct { color: #10b981; font-weight: bold; }
+        .wrong { color: #ef4444; font-weight: bold; }
+        a { color: #22d3ee; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CloudLab Latam - URL Test</h1>
+        <p>If you can see this page, you're accessing through XAMPP (Apache).</p>
+        <p class="wrong">❌ WRONG: You're using http://localhost/cloudlablatam1</p>
+        <p class="correct">✅ CORRECT: Use http://localhost:8000 instead</p>
+        <p><strong>Click here to go to the correct URL:</strong></p>
+        <p><a href="http://localhost:8000" style="font-size: 20px;">http://localhost:8000</a></p>
+        <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.3);">
+        <p><small>The Laravel application runs on port 8000, not through XAMPP Apache.</small></p>
+    </div>
+</body>
+</html>

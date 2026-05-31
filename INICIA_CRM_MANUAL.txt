@@ -1,0 +1,65 @@
+INSTRUCCIONES PARA INICIAR EL CRM MANUALMENTE
+==============================================
+
+PASO 1: Abrir Terminal 1 (API Backend)
+----------------------------------------
+1. Presiona Windows + R
+2. Escribe: cmd
+3. Presiona Enter
+
+En la terminal, escribe estos comandos:
+
+cd C:\xampp\htdocs\crm
+php artisan serve --port=8001
+
+DEJA ESTA VENTANA ABIERTA!
+
+
+PASO 2: Abrir Terminal 2 (Frontend)
+------------------------------------
+1. Presiona Windows + R de nuevo
+2. Escribe: cmd
+3. Presiona Enter
+
+En esta NUEVA terminal, escribe:
+
+cd C:\xampp\htdocs\crm\frontend
+npm run dev
+
+DEJA ESTA VENTANA ABIERTA TAMBIÉN!
+
+
+PASO 3: Verificar
+-----------------
+1. Espera 10-15 segundos
+2. Abre tu navegador
+3. Ve a: http://localhost:3000
+4. Debe mostrar la página de login del CRM
+
+
+PASO 4: Acceder desde Admin
+----------------------------
+1. Ve a: http://localhost:8000/admin/login
+2. Inicia sesión
+3. Haz clic en "CRM System" en el menú
+4. ¡Debería funcionar!
+
+
+IMPORTANTE:
+- NO cierres las ventanas de terminal
+- Ambas deben estar ejecutándose al mismo tiempo
+- Si cierras una ventana, ese servidor se detiene
+
+
+SI PHP NO FUNCIONA:
+-------------------
+Usa la ruta completa:
+C:\xampp\php\php.exe artisan serve --port=8001
+
+
+SI NPM NO FUNCIONA:
+-------------------
+1. Instala Node.js desde: https://nodejs.org/
+2. Reinicia la terminal
+3. Intenta de nuevo
+

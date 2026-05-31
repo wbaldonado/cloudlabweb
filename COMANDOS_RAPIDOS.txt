@@ -1,0 +1,54 @@
+═══════════════════════════════════════════════════════════
+  COMANDOS PARA INICIAR EL CRM - COPIA Y PEGA
+═══════════════════════════════════════════════════════════
+
+TERMINAL 1 - API BACKEND (Primera ventana)
+─────────────────────────────────────────────
+cd C:\xampp\htdocs\crm
+php artisan serve --port=8001
+
+⚠️ DEJA ESTA VENTANA ABIERTA!
+
+
+TERMINAL 2 - FRONTEND (Segunda ventana - NUEVA)
+─────────────────────────────────────────────────
+cd C:\xampp\htdocs\crm\frontend
+npm run dev
+
+⚠️ DEJA ESTA VENTANA ABIERTA TAMBIÉN!
+
+
+═══════════════════════════════════════════════════════════
+  PASOS DETALLADOS
+═══════════════════════════════════════════════════════════
+
+1. Presiona Windows + R
+2. Escribe: cmd
+3. Presiona Enter
+4. Copia y pega los comandos de TERMINAL 1
+5. Presiona Enter después de cada comando
+6. DEJA ESTA VENTANA ABIERTA
+
+7. Presiona Windows + R DE NUEVO
+8. Escribe: cmd
+9. Presiona Enter (NUEVA ventana)
+10. Copia y pega los comandos de TERMINAL 2
+11. Presiona Enter después de cada comando
+12. DEJA ESTA VENTANA ABIERTA TAMBIÉN
+
+13. Espera 10-15 segundos
+14. Abre el navegador
+15. Ve a: http://localhost:3000
+16. Debe cargar el CRM
+
+═══════════════════════════════════════════════════════════
+  IMPORTANTE
+═══════════════════════════════════════════════════════════
+
+✅ NECESITAS DOS VENTANAS DE TERMINAL
+✅ AMBAS deben estar ejecutándose AL MISMO TIEMPO
+✅ NO cierres las ventanas
+✅ Si cierras una ventana, ese servidor se detiene
+
+═══════════════════════════════════════════════════════════
+
