@@ -56,7 +56,7 @@
             class="tech-icon-image {{ $class ?? '' }}"
             width="{{ (int) $size }}"
             height="{{ (int) $size }}"
-            loading="lazy"
+            loading="eager"
             decoding="async"
             onerror="typeof clTechIconFallback==='function'&&clTechIconFallback(this)"
         >

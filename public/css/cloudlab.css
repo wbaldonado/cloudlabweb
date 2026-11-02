@@ -598,7 +598,7 @@
     margin-bottom: 2rem;
 }
 .cl-section-link {
-    color: var(--cl-primary);
+    color: var(--brand-cyan-ink);
     font-weight: 600;
     text-decoration: none;
 }
@@ -689,6 +689,29 @@
     border-radius: 4px;
     margin-bottom: 0.5rem;
 }
+.cl-card--media {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.cl-card-media-link {
+    display: block;
+    line-height: 0;
+    text-decoration: none;
+}
+.cl-card-media {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: var(--cl-bg);
+}
+.cl-card-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 .cl-card h5 { font-weight: 700; color: var(--cl-text); margin-bottom: 0.5rem; }
 .cl-card p { color: var(--cl-text-muted); font-size: 0.9rem; margin-bottom: 0; }
 .cl-link-read {
@@ -696,14 +719,14 @@
     align-items: center;
     gap: 0.35rem;
     margin-top: 1rem;
-    color: var(--cl-primary);
+    color: var(--brand-cyan-ink);
     font-weight: 600;
     text-decoration: none;
     font-size: 0.9rem;
 }
 .cl-link-read:hover { text-decoration: underline; }
 .cl-learn-more {
-    color: var(--cl-primary);
+    color: var(--brand-cyan-ink);
     font-weight: 600;
     text-decoration: none;
     font-size: 0.9rem;
@@ -789,7 +812,7 @@ body.cl-home-body main { background: transparent; }
 .cl-about-tagline {
     font-size: clamp(1.1rem, 2vw, 1.35rem);
     font-weight: 600;
-    color: var(--cl-primary);
+    color: var(--brand-cyan-ink);
     margin-bottom: 1.75rem;
 }
 
@@ -848,7 +871,7 @@ body.cl-home-body main { background: transparent; }
 
 .cl-about-page .about-values-section {
     margin-top: 0;
-    background: linear-gradient(165deg, #001428 0%, #002b5c 45%, #001f3d 100%) !important;
+    background: linear-gradient(165deg, var(--brand-black) 0%, var(--brand-ink) 55%, var(--brand-ink-soft) 100%) !important;
 }
 
 /* —— Blog post featured image —— */
@@ -1579,10 +1602,11 @@ a.cloud-bot__action.is-primary {
 }
 .cl-offer-card {
     background: #fff;
-    border: 1px solid var(--cl-border, #e2e8f0);
+    border: 1px solid rgba(0, 168, 197, 0.28);
+    border-left: 3px solid var(--brand-cyan-dark);
     border-radius: 16px;
     padding: 1.5rem;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+    box-shadow: 0 8px 24px rgba(5, 7, 10, 0.06);
 }
 .cl-offer-card--lg { grid-column: 1 / -1; }
 .cl-offer-card h3 {
@@ -1604,6 +1628,11 @@ a.cloud-bot__action.is-primary {
     grid-template-columns: 1.2fr 0.8fr;
     gap: 1.5rem;
     align-items: center;
+    background: #fff;
+    border: 1px solid rgba(0, 168, 197, 0.28);
+    border-top: 3px solid var(--brand-cyan-dark);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem 1.5rem;
 }
 .cl-calc-controls label {
     display: flex;
@@ -1617,14 +1646,21 @@ a.cloud-bot__action.is-primary {
 .cl-calc-results p {
     display: flex;
     justify-content: space-between;
+    align-items: baseline;
     gap: 1rem;
     margin: 0 0 0.75rem;
     font-size: 1.05rem;
+    color: var(--brand-ink);
+}
+.cl-calc-results strong {
+    color: var(--brand-cyan-ink);
+    font-size: 1.45rem;
+    font-weight: 800;
 }
 .cl-calc-note,
 .cl-field-error {
     margin-top: 1rem;
-    color: #475569;
+    color: var(--cl-text-muted);
     font-size: 0.92rem;
 }
 .cl-field-error { color: #b42318; margin-top: 0.35rem; }
@@ -1635,19 +1671,21 @@ a.cloud-bot__action.is-primary {
     margin-bottom: 1rem;
 }
 .cl-step-tabs button {
-    border: 1px solid #cbd5e1;
+    border: 1px solid rgba(0, 168, 197, 0.35);
     background: #fff;
+    color: var(--brand-ink);
     border-radius: 999px;
     padding: 0.45rem 0.9rem;
     font-weight: 600;
 }
 .cl-step-tabs button[aria-selected="true"] {
-    background: #05070a;
+    background: var(--brand-black);
     color: #fff;
-    border-color: #05070a;
+    border-color: var(--brand-black);
 }
 .cl-step-panel {
     background: #fff;
+    border: 1px solid rgba(0, 168, 197, 0.22);
     border-radius: 16px;
     padding: 1.5rem;
 }
@@ -1660,9 +1698,17 @@ a.cloud-bot__action.is-primary {
 .cl-landing-form input,
 .cl-landing-form textarea {
     width: 100%;
-    border: 1px solid #cbd5e1;
+    border: 1px solid rgba(0, 168, 197, 0.35);
     border-radius: 10px;
     padding: 0.7rem 0.85rem;
+    color: var(--brand-ink);
+    background: #fff;
+}
+.cl-landing-form input:focus,
+.cl-landing-form textarea:focus {
+    outline: none;
+    border-color: var(--brand-cyan-dark);
+    box-shadow: 0 0 0 3px rgba(0, 168, 197, 0.2);
 }
 .cl-landing-form button {
     border: 0;
@@ -1677,6 +1723,77 @@ a.cloud-bot__action.is-primary {
 .collapse,
 .collapsing {
     visibility: visible;
+}
+
+/* Brand application: one palette on every public surface */
+:root {
+    --bs-primary: #05070a;
+    --bs-primary-rgb: 5, 7, 10;
+    --bs-link-color: #0a6d80;
+    --bs-link-hover-color: #05070a;
+    --bs-link-color-rgb: 10, 109, 128;
+    --bs-focus-ring-color: rgba(0, 168, 197, 0.45);
+    --bs-body-bg: #f2fbfc;
+    --bs-body-color: #0a1220;
+    accent-color: #00a8c5;
+}
+body {
+    background-color: var(--cl-bg);
+    color: var(--cl-text);
+}
+.cl-page {
+    background-color: var(--cl-bg);
+}
+.cl-section-title {
+    color: var(--brand-ink);
+}
+.cl-section-title::after {
+    content: "";
+    display: block;
+    width: 3rem;
+    height: 3px;
+    margin-top: 0.7rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--brand-cyan) 0%, var(--brand-magenta) 100%);
+}
+.btn-primary {
+    background-color: var(--brand-black);
+    border-color: var(--brand-black);
+    color: #fff;
+}
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--brand-ink);
+    border-color: var(--brand-cyan-dark);
+    color: #fff;
+}
+.btn-outline-primary {
+    color: var(--brand-cyan-ink);
+    border-color: var(--brand-cyan-dark);
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--brand-black);
+    border-color: var(--brand-black);
+    color: #fff;
+}
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--brand-cyan-dark);
+    box-shadow: 0 0 0 0.2rem rgba(0, 168, 197, 0.22);
+}
+.blog-content a,
+.card a:not(.btn):not(.cl-btn-solid):not(.cl-btn-outline) {
+    color: var(--brand-cyan-ink);
+}
+.nav-link-active {
+    color: var(--brand-cyan-soft) !important;
+    background-color: rgba(0, 229, 255, 0.12) !important;
+    text-decoration-color: var(--brand-cyan) !important;
+}
+input[type="range"] {
+    accent-color: var(--brand-cyan-dark);
 }
 
 

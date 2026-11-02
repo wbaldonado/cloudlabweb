@@ -2184,7 +2184,8 @@
         .blog-content a:hover {
             color: var(--primary);
         }
-        .blog-content img {
+        .blog-content img,
+        .project-content img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
@@ -2212,29 +2213,10 @@
             display: none;
         }
         
-        /* Lazy Loading Styles */
-        img[loading="lazy"] {
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-        }
-        img[loading="lazy"].loaded {
+        /* Native lazy loading must not hide the picture. A missed observer left icons and covers at opacity 0. */
+        img[loading="lazy"],
+        img.scroll-animate {
             opacity: 1;
-        }
-        
-        /* Placeholder for lazy images */
-        img[loading="lazy"]:not(.loaded) {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading-shimmer 1.5s infinite;
-        }
-        
-        @keyframes loading-shimmer {
-            0% {
-                background-position: 200% 0;
-            }
-            100% {
-                background-position: -200% 0;
-            }
         }
         .blog-content blockquote {
             border-left: 4px solid var(--accent);
@@ -3153,7 +3135,7 @@
             text-align: justify;
         }
         .about-values-section {
-            background: linear-gradient(165deg, #001428 0%, #002b5c 45%, #001f3d 100%);
+            background: linear-gradient(165deg, #05070a 0%, #0a1220 55%, #121c2e 100%);
             padding: 80px 0;
         }
         .about-values-section .about-section-title {

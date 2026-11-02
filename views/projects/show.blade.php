@@ -18,7 +18,7 @@
             
             @if($project->translated('content') !== '')
             <div class="project-content content mb-4">
-                {!! $project->translated('content') !!}
+                {!! str_replace('/storage/images/', '/images/', $project->translated('content')) !!}
             </div>
             @endif
             

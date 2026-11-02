@@ -189,13 +189,20 @@
                 <div class="row g-4">
                     @foreach($recentBlogs as $blog)
                         <div class="col-md-6 col-lg-4">
-                            <article class="cl-card cl-glow-card">
-                                <span class="cl-badge">{{ __('messages.home.badge_blog') }}</span>
-                                <h5>{{ $blog->title }}</h5>
-                                <p>{{ \Illuminate\Support\Str::limit($blog->excerpt ?: __('messages.home.card_placeholder'), 120) }}</p>
-                                <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-link-read">
-                                    {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
-                                </a>
+                            <article class="cl-card cl-glow-card cl-card--media">
+                                @if($blog->featured_image_url)
+                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-card-media-link">
+                                        <img src="{{ $blog->featured_image_url }}" class="cl-card-media" alt="{{ $blog->title }}" width="640" height="360">
+                                    </a>
+                                @endif
+                                <div class="cl-card-body">
+                                    <span class="cl-badge">{{ __('messages.home.badge_blog') }}</span>
+                                    <h5>{{ $blog->title }}</h5>
+                                    <p>{{ \Illuminate\Support\Str::limit($blog->excerpt ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-link-read">
+                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
                             </article>
                         </div>
                     @endforeach
@@ -219,13 +226,20 @@
                 <div class="row g-4">
                     @foreach($featuredProjects as $project)
                         <div class="col-md-6 col-lg-4">
-                            <article class="cl-card cl-glow-card">
-                                <span class="cl-badge">{{ __('messages.home.badge_project') }}</span>
-                                <h5>{{ $project->translated('title') }}</h5>
-                                <p>{{ \Illuminate\Support\Str::limit($project->translated('description') ?: __('messages.home.card_placeholder'), 120) }}</p>
-                                <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-link-read">
-                                    {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
-                                </a>
+                            <article class="cl-card cl-glow-card cl-card--media">
+                                @if($project->image_url)
+                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-card-media-link">
+                                        <img src="{{ $project->image_url }}" class="cl-card-media" alt="{{ $project->translated('title') }}" width="640" height="360">
+                                    </a>
+                                @endif
+                                <div class="cl-card-body">
+                                    <span class="cl-badge">{{ __('messages.home.badge_project') }}</span>
+                                    <h5>{{ $project->translated('title') }}</h5>
+                                    <p>{{ \Illuminate\Support\Str::limit($project->translated('description') ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-link-read">
+                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
                             </article>
                         </div>
                     @endforeach

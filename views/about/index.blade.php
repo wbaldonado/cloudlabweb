@@ -123,7 +123,7 @@
 <style nonce="{{ $cspNonce ?? '' }}">
     .cl-about-highlights .cl-about-box {
         background-color: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
+        border: 1px solid rgba(0, 168, 197, 0.28) !important;
         border-radius: 14px !important;
         box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08) !important;
     }
@@ -133,12 +133,12 @@
     .cl-about-box__title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #002b5c;
+        color: #0a1220;
         margin-bottom: 0.85rem;
     }
     .cl-about-box__text {
         font-size: 0.95rem;
-        color: #64748b;
+        color: #4a6670;
         line-height: 1.7;
         margin: 0;
     }

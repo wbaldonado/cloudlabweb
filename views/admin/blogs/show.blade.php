@@ -14,7 +14,7 @@
 <div class="card">
     <div class="card-body">
         @if($blog->featured_image)
-        <img src="{{ asset('storage/' . $blog->featured_image) }}" class="img-fluid mb-3" alt="{{ $blog->title }}">
+        <img src="{{ $blog->featured_image_url }}" class="img-fluid mb-3" alt="{{ $blog->title }}">
         @endif
         
         <p><strong>Status:</strong> 
@@ -31,7 +31,7 @@
         
         <p><strong>Content:</strong></p>
         <div class="border p-3 mb-3 blog-content">
-            {!! $blog->content !!}
+            {!! str_replace('/storage/images/', '/images/', $blog->content) !!}
         </div>
         
         <p><strong>Author:</strong> {{ $blog->user->name ?? 'N/A' }}</p>

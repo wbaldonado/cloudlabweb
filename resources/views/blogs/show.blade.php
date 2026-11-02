@@ -47,7 +47,7 @@
                 @endif
                 
                 <div class="blog-content">
-                    {!! $blog->content !!}
+                    {!! str_replace('/storage/images/', '/images/', $blog->content) !!}
                 </div>
                 
                 {{-- Fix images in content if they're broken --}}
@@ -58,10 +58,10 @@
                         if (blogContent) {
                             const images = blogContent.querySelectorAll('img');
                             images.forEach(img => {
-                                // Add error handler for broken images
-                                img.addEventListener('error', function() {
-                                    this.style.display = 'none';
-                                });
+                                const raw = img.getAttribute('src') || '';
+                                if (raw.indexOf('/storage/images/') !== -1) {
+                                    img.setAttribute('src', raw.replace('/storage/images/', '/images/'));
+                                }
                                 
                                 // Ensure images are responsive
                                 if (!img.hasAttribute('style') || !img.style.maxWidth) {

@@ -18,25 +18,25 @@
         .sidebar.offcanvas,
         .sidebar.offcanvas-md,
         .sidebar .offcanvas-body {
-            background-color: #2c3e50 !important;
+            background-color: #05070a !important;
         }
         .sidebar {
             min-height: 100vh;
         }
         @media (min-width: 768px) {
             .sidebar.offcanvas-md {
-                background-color: #2c3e50 !important;
+                background-color: #05070a !important;
             }
         }
         .sidebar .nav-link {
             color: #ecf0f1;
         }
         .sidebar .nav-link:hover {
-            background-color: #34495e;
+            background-color: #121c2e;
             color: #fff;
         }
         .sidebar .nav-link.active {
-            background-color: #3498db;
+            background-color: #0a6d80;
             color: #fff;
         }
         .sidebar .nav-link[data-bs-toggle="collapse"] {
@@ -53,7 +53,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            background: #2c3e50;
+            background: #05070a;
             color: #fff;
             padding: 0.7rem 1rem;
         }
@@ -61,11 +61,29 @@
             color: #fff;
             border-color: rgba(255, 255, 255, 0.35);
         }
+        .btn-primary {
+            background-color: #05070a;
+            border-color: #05070a;
+        }
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #0a1220;
+            border-color: #00a8c5;
+        }
+        .btn-outline-primary {
+            color: #0a6d80;
+            border-color: #00a8c5;
+        }
+        .btn-outline-primary:hover {
+            background-color: #05070a;
+            border-color: #05070a;
+            color: #fff;
+        }
         @media (max-width: 767.98px) {
             .sidebar.offcanvas-md {
                 --bs-offcanvas-width: min(280px, 86vw);
-                --bs-offcanvas-bg: #2c3e50;
-                background-color: #2c3e50 !important;
+                --bs-offcanvas-bg: #05070a;
+                background-color: #05070a !important;
             }
             .sidebar .offcanvas-title {
                 color: #fff;
