@@ -207,4 +207,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## Support
 
-For support, email info@cloudlablatam.tech or create an issue in the repository.
+For support, email info@cloudlablatam.com or create an issue in the repository.
