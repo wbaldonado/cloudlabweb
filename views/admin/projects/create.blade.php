@@ -11,7 +11,7 @@
 <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="mb-3">
-        <label for="title" class="form-label">Title *</label>
+        <label for="title" class="form-label">Title (Spanish) *</label>
         <input type="text" class="form-control @error('title') is-invalid @enderror" id="title" name="title" value="{{ old('title') }}" required>
         @error('title')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
+        <label for="description" class="form-label">Description (Spanish)</label>
         <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description" rows="3">{{ old('description') }}</textarea>
         @error('description')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -27,12 +27,34 @@
     </div>
 
     <div class="mb-3">
-        <label for="content" class="form-label">Content</label>
-        <textarea class="form-control @error('content') is-invalid @enderror" id="content" name="content" rows="10">{{ old('content') }}</textarea>
-        @error('content')
+        <label for="meta_title" class="form-label">SEO title</label>
+        <input type="text" class="form-control @error('meta_title') is-invalid @enderror" id="meta_title" name="meta_title" maxlength="70" value="{{ old('meta_title') }}">
+        <div class="form-text">Optional. Replaces the project title in search results.</div>
+        @error('meta_title')
         <div class="invalid-feedback">{{ $message }}</div>
         @enderror
     </div>
+
+    <div class="mb-3">
+        <label for="meta_description" class="form-label">Meta description</label>
+        <textarea class="form-control @error('meta_description') is-invalid @enderror" id="meta_description" name="meta_description" maxlength="160" rows="2">{{ old('meta_description') }}</textarea>
+        <div class="form-text">Optional. 150 to 160 characters.</div>
+        @error('meta_description')
+        <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="content" class="form-label">Content (Spanish)</label>
+        <div id="content-editor" data-quill-editor data-quill-input="content" style="height: 400px;"></div>
+        <textarea id="content" name="content" hidden aria-hidden="true">{{ old('content') }}</textarea>
+        <small class="form-text text-muted">Rich text: formatting, images, and YouTube/Vimeo videos.</small>
+        @error('content')
+        <div class="invalid-feedback d-block">{{ $message }}</div>
+        @enderror
+    </div>
+
+    @include('admin.projects._english')
 
     <div class="mb-3">
         <label for="image" class="form-label">Image</label>
@@ -59,7 +81,7 @@
     </div>
 
     <div class="mb-3">
-        <label for="technologies" class="form-label">Technologies (comma separated)</label>
+        <label for="technologies" class="form-label">Technologies, Spanish (comma separated)</label>
         <input type="text" class="form-control @error('technologies') is-invalid @enderror" id="technologies" name="technologies" value="{{ old('technologies') }}" placeholder="PHP, Laravel, MySQL">
         @error('technologies')
         <div class="invalid-feedback">{{ $message }}</div>
@@ -78,5 +100,6 @@
 
     <button type="submit" class="btn btn-primary">Create Project</button>
 </form>
-@endsection
 
+@include('admin.partials.rich-text-editor', ['uploadRoute' => route('admin.projects.upload-image')])
+@endsection

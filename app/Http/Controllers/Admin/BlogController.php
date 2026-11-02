@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Support\Branding;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Schema;
 
 class BlogController extends Controller
 {
@@ -25,16 +27,23 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:70',
+            'meta_description' => 'nullable|string|max:160',
             'content' => 'required|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
             'is_published' => 'boolean',
         ]);
 
         $validated['user_id'] = auth()->id();
         $validated['is_published'] = $request->has('is_published');
+        $validated = $this->onlyExistingSeoColumns($validated);
 
         if ($request->hasFile('featured_image')) {
-            $validated['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+            $validated['featured_image'] = PublicMedia::storeImage(
+                $request->file('featured_image'),
+                'blogs',
+                PublicMedia::blogImageResizeOptions()
+            );
         }
 
         $blog = Blog::create($validated);
@@ -62,18 +71,23 @@ class BlogController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'excerpt' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:70',
+            'meta_description' => 'nullable|string|max:160',
             'content' => 'required|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
             'is_published' => 'boolean',
         ]);
 
         $validated['is_published'] = $request->has('is_published');
+        $validated = $this->onlyExistingSeoColumns($validated);
 
         if ($request->hasFile('featured_image')) {
-            if ($blog->featured_image) {
-                Storage::disk('public')->delete($blog->featured_image);
-            }
-            $validated['featured_image'] = $request->file('featured_image')->store('blogs', 'public');
+            PublicMedia::delete($blog->featured_image);
+            $validated['featured_image'] = PublicMedia::storeImage(
+                $request->file('featured_image'),
+                'blogs',
+                PublicMedia::blogImageResizeOptions()
+            );
         }
 
         $blog->update($validated);
@@ -83,9 +97,7 @@ class BlogController extends Controller
 
     public function destroy(Blog $blog)
     {
-        if ($blog->featured_image) {
-            Storage::disk('public')->delete($blog->featured_image);
-        }
+        PublicMedia::delete($blog->featured_image);
         $blog->delete();
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog deleted successfully.');
@@ -94,13 +106,17 @@ class BlogController extends Controller
     public function uploadImage(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('blogs/content', 'public');
-            $url = asset('storage/' . $path);
-            
+            $path = PublicMedia::storeImage(
+                $request->file('image'),
+                'blogs/content',
+                PublicMedia::blogImageResizeOptions()
+            );
+            $url = Branding::assetUrl($path);
+
             return response()->json([
                 'success' => true,
                 'url' => $url,
@@ -111,5 +127,14 @@ class BlogController extends Controller
             'success' => false,
             'message' => 'No image file provided.',
         ], 400);
+    }
+
+    private function onlyExistingSeoColumns(array $validated): array
+    {
+        if (! Schema::hasColumn('blogs', 'meta_title')) {
+            unset($validated['meta_title'], $validated['meta_description']);
+        }
+
+        return $validated;
     }
 }

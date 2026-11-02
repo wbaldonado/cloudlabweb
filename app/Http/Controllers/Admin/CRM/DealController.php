@@ -4,64 +4,57 @@ namespace App\Http\Controllers\Admin\CRM;
 
 use App\Http\Controllers\Controller;
 use App\Models\CRM\Deal;
-use App\Models\CRM\Contact;
-use App\Models\CRM\Company;
-use App\Models\User;
+use App\Support\CrmPresenter;
 use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
     public function index()
     {
-        $deals = Deal::with(['contact', 'company', 'owner'])->latest()->paginate(15);
-        return view('admin.crm.deals.index', compact('deals'));
+        return redirect()->route('admin.crm.dashboard');
     }
 
     public function create()
     {
-        $contacts = Contact::orderBy('first_name')->get();
-        $companies = Company::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
-        return view('admin.crm.deals.create', compact('contacts', 'companies', 'users'));
+        return redirect()->route('admin.crm.dashboard');
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'amount' => 'nullable|numeric|min:0',
-            'stage' => 'required|in:prospecting,qualified,proposal,negotiation,won,lost',
-            'contact_id' => 'nullable|exists:crm_contacts,id',
-            'company_id' => 'nullable|exists:crm_companies,id',
-            'owner_id' => 'nullable|exists:users,id',
-            'expected_close_date' => 'nullable|date',
-            'description' => 'nullable|string',
-            'probability' => 'nullable|integer|min:0|max:100',
-        ]);
+        $deal = Deal::create($this->validatedDeal($request));
 
-        $validated['amount'] = $validated['amount'] ?? 0;
-        $validated['probability'] = $validated['probability'] ?? 0;
-
-        Deal::create($validated);
-
-        return redirect()->route('admin.crm.deals.index')->with('success', 'Deal created successfully.');
+        return $this->jsonOrRedirect($request, 'Oportunidad creada correctamente.', $deal);
     }
 
     public function show(Deal $deal)
     {
-        $deal->load(['contact', 'company', 'owner']);
-        return view('admin.crm.deals.show', compact('deal'));
+        return redirect()->route('admin.crm.dashboard');
     }
 
     public function edit(Deal $deal)
     {
-        $contacts = Contact::orderBy('first_name')->get();
-        $companies = Company::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
-        return view('admin.crm.deals.edit', compact('deal', 'contacts', 'companies', 'users'));
+        return redirect()->route('admin.crm.dashboard');
     }
 
     public function update(Request $request, Deal $deal)
+    {
+        $deal->update($this->validatedDeal($request));
+
+        return $this->jsonOrRedirect($request, 'Oportunidad actualizada correctamente.', $deal);
+    }
+
+    public function destroy(Request $request, Deal $deal)
+    {
+        $deal->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Oportunidad eliminada.']);
+        }
+
+        return redirect()->route('admin.crm.dashboard')->with('success', 'Deal deleted.');
+    }
+
+    protected function validatedDeal(Request $request): array
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -78,16 +71,19 @@ class DealController extends Controller
         $validated['amount'] = $validated['amount'] ?? 0;
         $validated['probability'] = $validated['probability'] ?? 0;
 
-        $deal->update($validated);
-
-        return redirect()->route('admin.crm.deals.index')->with('success', 'Deal updated successfully.');
+        return $validated;
     }
 
-    public function destroy(Deal $deal)
+    protected function jsonOrRedirect(Request $request, string $message, Deal $deal)
     {
-        $deal->delete();
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'deal' => CrmPresenter::deal($deal->fresh(['company', 'contact', 'owner'])),
+            ]);
+        }
 
-        return redirect()->route('admin.crm.deals.index')->with('success', 'Deal deleted successfully.');
+        return redirect()->route('admin.crm.dashboard')->with('success', $message);
     }
 }
-

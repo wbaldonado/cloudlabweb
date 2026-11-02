@@ -1,118 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ app()->getLocale() === 'es' ? 'es-CO' : 'en' }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
-    @php
-        use App\Services\SEOService;
-        $baseUrl = config('app.url');
-        $pageType = $pageType ?? 'home';
-        $pageData = $pageData ?? null;
-        $meta = SEOService::getPageMeta($pageType, $pageData);
-    @endphp
-    
-    {{-- Basic Meta Tags --}}
-    <title>{{ $meta['title'] }}</title>
-    <meta name="description" content="{{ $meta['description'] }}">
-    <meta name="keywords" content="{{ $meta['keywords'] }}">
-    <meta name="author" content="{{ $meta['author'] }}">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    
-    {{-- Additional SEO Meta Tags --}}
-    @if(isset($meta['revisit_after']))
-    <meta name="revisit-after" content="{{ $meta['revisit_after'] }}">
-    @endif
-    @if(isset($meta['rating']))
-    <meta name="rating" content="{{ $meta['rating'] }}">
-    @endif
-    @if(isset($meta['distribution']))
-    <meta name="distribution" content="{{ $meta['distribution'] }}">
-    @endif
-    @if(isset($meta['language']))
-    <meta name="language" content="{{ $meta['language'] }}">
-    @endif
-    @if(isset($meta['geo_region']))
-    <meta name="geo.region" content="{{ $meta['geo_region'] }}">
-    @endif
-    @if(isset($meta['geo_placename']))
-    <meta name="geo.placename" content="{{ $meta['geo_placename'] }}">
-    @endif
-    @if(isset($meta['copyright']))
-    <meta name="copyright" content="{{ $meta['copyright'] }}">
-    @endif
-    @if(isset($meta['reply_to']))
-    <meta name="reply-to" content="{{ $meta['reply_to'] }}">
-    @endif
-    @if(isset($meta['category']))
-    <meta name="category" content="{{ $meta['category'] }}">
-    @endif
-    
-    {{-- Canonical URL --}}
-    @if(isset($meta['canonical']))
-    <link rel="canonical" href="{{ $meta['canonical'] }}">
-    @else
-    <link rel="canonical" href="{{ $baseUrl . request()->getPathInfo() }}">
-    @endif
-    
-    {{-- Open Graph / Facebook --}}
-    <meta property="og:type" content="{{ $meta['og_type'] }}">
-    <meta property="og:url" content="{{ $meta['canonical'] ?? $baseUrl . request()->getPathInfo() }}">
-    <meta property="og:title" content="{{ $meta['title'] }}">
-    <meta property="og:description" content="{{ $meta['description'] }}">
-    <meta property="og:site_name" content="{{ $meta['og_site_name'] }}">
-    <meta property="og:locale" content="{{ app()->getLocale() === 'es' ? 'es_ES' : 'en_US' }}">
-    <meta property="og:locale:alternate" content="{{ app()->getLocale() === 'es' ? 'en_US' : 'es_ES' }}">
-    <meta property="og:image" content="{{ $meta['og_image'] ?? $baseUrl . '/images/logo.png' }}">
-    <meta property="og:image:secure_url" content="{{ str_replace('http://', 'https://', $meta['og_image'] ?? $baseUrl . '/images/logo.png') }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:alt" content="{{ $meta['title'] }}">
-    <meta property="og:updated_time" content="{{ now()->toIso8601String() }}">
-    
-    {{-- Article Meta (for blog posts) --}}
-    @if($meta['og_type'] === 'article' && isset($meta['article_published_time']))
-    <meta property="article:published_time" content="{{ $meta['article_published_time'] }}">
-    <meta property="article:modified_time" content="{{ $meta['article_modified_time'] ?? $meta['article_published_time'] }}">
-    <meta property="article:author" content="{{ $meta['article_author'] ?? 'CloudLab Latam' }}">
-    <meta property="article:section" content="{{ $meta['article_section'] ?? 'Technology' }}">
-    @if(isset($meta['article_tag']))
-    <meta property="article:tag" content="{{ $meta['article_tag'] }}">
-    @endif
-    @endif
-    
-    {{-- Twitter Card --}}
-    <meta name="twitter:card" content="{{ $meta['twitter_card'] }}">
-    <meta name="twitter:site" content="{{ $meta['twitter_site'] }}">
-    @if(isset($meta['twitter_creator']))
-    <meta name="twitter:creator" content="{{ $meta['twitter_creator'] }}">
-    @endif
-    <meta name="twitter:title" content="{{ $meta['title'] }}">
-    <meta name="twitter:description" content="{{ $meta['description'] }}">
-    <meta name="twitter:image" content="{{ $meta['og_image'] ?? $baseUrl . '/images/logo.png' }}">
-    <meta name="twitter:image:alt" content="{{ $meta['title'] }}">
-    
-    {{-- Language Alternates (hreflang) --}}
-    @if(isset($meta['alternate_lang_es']) || isset($meta['alternate_lang_en']))
-        @if(isset($meta['alternate_lang_es']))
-        <link rel="alternate" hreflang="es" href="{{ $meta['alternate_lang_es'] }}">
-        @endif
-        @if(isset($meta['alternate_lang_en']))
-        <link rel="alternate" hreflang="en" href="{{ $meta['alternate_lang_en'] }}">
-        @endif
-        <link rel="alternate" hreflang="x-default" href="{{ $meta['canonical'] ?? $baseUrl . request()->getPathInfo() }}">
-    @else
-        <link rel="alternate" hreflang="{{ app()->getLocale() === 'es' ? 'es' : 'en' }}" href="{{ $meta['canonical'] ?? $baseUrl . request()->getPathInfo() }}">
-        <link rel="alternate" hreflang="{{ app()->getLocale() === 'es' ? 'en' : 'es' }}" href="{{ $baseUrl . request()->getPathInfo() }}?lang={{ app()->getLocale() === 'es' ? 'en' : 'es' }}">
-        <link rel="alternate" hreflang="x-default" href="{{ $baseUrl . request()->getPathInfo() }}">
-    @endif
-    
+    @include('components.seo-meta')
+
     {{-- Additional Meta Tags for AI Search Tools --}}
-    <meta name="theme-color" content="#0066FF">
+    <meta name="theme-color" content="#05070A">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -125,33 +21,13 @@
     
     {{-- Content Type and Charset --}}
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Content-Language" content="{{ app()->getLocale() === 'es' ? 'es' : 'en' }}">
+    <meta http-equiv="Content-Language" content="{{ app()->getLocale() === 'es' ? 'es-CO' : 'en' }}">
     
     {{-- Favicons --}}
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32.png') }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('favicon.png') }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
     
-    {{-- Structured Data (JSON-LD) --}}
-    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">
-    {!! json_encode(SEOService::generateOrganizationSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
-    </script>
-    
-    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">
-    {!! json_encode(SEOService::generateWebSiteSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
-    </script>
-    
-    @if($pageType === 'blog_post' && $pageData)
-    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">
-    {!! json_encode(SEOService::generateBlogPostSchema($pageData), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
-    </script>
-    @endif
-    
-    @if($pageType === 'project_detail' && $pageData)
-    <script type="application/ld+json" nonce="{{ $cspNonce ?? '' }}">
-    {!! json_encode(SEOService::generateProjectSchema($pageData), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
-    </script>
-    @endif
     @php
         $viteManifest = public_path('build/manifest.json');
         $viteExists = file_exists($viteManifest);
@@ -171,13 +47,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Critical Navigation CSS (fallback when Vite assets not loaded) -->
     <style nonce="{{ $cspNonce ?? '' }}">
-        /* Color Palette Variables */
+        /* Color Palette Variables — see public/css/brand.css */
         :root {
-            --primary: #0066FF; /* Azul más vibrante */
-            --secondary: #00D4AA; /* Verde azulado para CTAs */
-            --dark: #0F172A; /* Para textos */
-            --light: #F8FAFC; /* Fondo claro */
-            --accent: #F59E0B; /* Para highlights */
+            --primary: #00E5FF;
+            --secondary: #E040FB;
+            --dark: #05070A;
+            --light: #E0FBFC;
+            --accent: #9D00FF;
             
             /* Responsive Typography Base Sizes */
             --base-font-size: clamp(14px, 2.5vw, 16px);
@@ -198,7 +74,7 @@
         .z-10 { z-index: 10; }
         .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
         .from-slate-900 { --tw-gradient-from: var(--dark); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(15, 23, 42, 0)); }
-        .via-blue-900 { --tw-gradient-stops: var(--tw-gradient-from), var(--primary), var(--tw-gradient-to, rgba(0, 102, 255, 0)); }
+        .via-blue-900 { --tw-gradient-stops: var(--tw-gradient-from), var(--primary), var(--tw-gradient-to, rgba(0, 229, 255, 0)); }
         .to-blue-800 { --tw-gradient-to: var(--primary); }
         .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         .absolute { position: absolute; }
@@ -327,19 +203,19 @@
             cursor: pointer;
         }
         .btn-primary:hover {
-            background-color: #0052CC;
-            border-color: #0052CC;
+            background-color: #00A8C5;
+            border-color: #00A8C5;
             color: white;
         }
         .btn-secondary {
             background-color: var(--secondary);
             border-color: var(--secondary);
-            color: var(--dark);
+            color: #fff;
         }
         .btn-secondary:hover {
-            background-color: #00B894;
-            border-color: #00B894;
-            color: var(--dark);
+            background-color: #9D00FF;
+            border-color: #9D00FF;
+            color: #fff;
         }
         .underline-offset-4 { text-underline-offset: 4px; }
         @media (min-width: 640px) {
@@ -402,8 +278,7 @@
         }
     </style>
     <style nonce="{{ $cspNonce ?? '' }}">
-        /* Typography System */
-        /* Body: System fonts for optimal legibility */
+        /* Typography: one family for titles, headings, and body */
         /* Responsive Typography */
         html {
             font-size: var(--base-font-size);
@@ -413,7 +288,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             font-size: var(--base-font-size);
             line-height: 1.6;
             line-height: 1.6;
@@ -482,7 +357,7 @@
             display: none;
         }
         .main-header {
-            background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 45%, #0052CC 100%);
+            background: linear-gradient(135deg, var(--dark) 0%, var(--brand-ink, #0a1220) 45%, #121c2e 100%);
             background-size: 200% 200%;
             animation: headerGradient 12s ease infinite;
             box-shadow: 0 10px 30px rgba(15, 23, 42, 0.4);
@@ -508,15 +383,15 @@
             content: "";
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.25), transparent 55%),
-                        radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.25), transparent 50%);
+            background: radial-gradient(circle at top right, rgba(0, 229, 255, 0.22), transparent 55%),
+                        radial-gradient(circle at bottom left, rgba(224, 64, 251, 0.2), transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
         .header-logo {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+            background: linear-gradient(135deg, #7EF9FF 0%, #9D00FF 100%);
             border-radius: 12px;
             display: inline-flex;
             align-items: center;
@@ -552,7 +427,7 @@
             white-space: nowrap;
         }
         .navbar-brand:hover {
-            color: #bae6fd !important;
+            color: #7EF9FF !important;
         }
         .main-navbar {
             position: relative;
@@ -708,7 +583,7 @@
             width: 85%;
             max-width: 320px;
             height: 100%;
-            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(180deg, #0a1220 0%, #121c2e 100%);
             box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -850,7 +725,7 @@
         }
         
         .mobile-menu-link-active {
-            background: rgba(0, 102, 255, 0.15);
+            background: rgba(0, 229, 255, 0.15);
             color: #ffffff;
             border-left-color: var(--primary);
             font-weight: 600;
@@ -959,13 +834,13 @@
         }
         
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary) 0%, #0052CC 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, #00A8C5 100%);
             border-radius: 10px;
             border: 2px solid rgba(15, 23, 42, 0.1);
         }
         
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #0052CC 0%, var(--primary) 100%);
+            background: linear-gradient(135deg, #00A8C5 0%, var(--primary) 100%);
         }
         
         ::-webkit-scrollbar-corner {
@@ -997,7 +872,7 @@
         .blog-content::-webkit-scrollbar-thumb:hover,
         .card-body::-webkit-scrollbar-thumb:hover,
         .card::-webkit-scrollbar-thumb:hover {
-            background: #0052CC;
+            background: #00A8C5;
         }
         
         /* Firefox for specific elements */
@@ -1023,7 +898,7 @@
         }
         
         .mobile-menu-content::-webkit-scrollbar-thumb:hover {
-            background: #0052CC;
+            background: #00A8C5;
         }
         
         /* Additional scrollbar styles for overflow elements */
@@ -1041,7 +916,7 @@
         
         *[style*="overflow"]::-webkit-scrollbar-thumb:hover,
         *[class*="overflow"]::-webkit-scrollbar-thumb:hover {
-            background: #0052CC;
+            background: #00A8C5;
         }
         
         /* Desktop: >= 1280px */
@@ -1113,8 +988,8 @@
             color: #ffffff;
         }
         .lang-button.active {
-            background-color: #38bdf8;
-            color: #0f172a;
+            background-color: #7EF9FF;
+            color: #0a1220;
             border-color: rgba(255, 255, 255, 0.35);
         }
         .lang-text {
@@ -1130,12 +1005,12 @@
             color: #ffffff;
         }
         .lang-text.active {
-            background-color: #38bdf8;
-            color: #0f172a;
+            background-color: #7EF9FF;
+            color: #0a1220;
         }
         .admin-button {
-            background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
-            color: #0f172a;
+            background: linear-gradient(135deg, #7EF9FF 0%, #9D00FF 100%);
+            color: #0a1220;
             border: none;
             border-radius: 8px;
             padding: 8px 18px;
@@ -1145,15 +1020,15 @@
         }
         .admin-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 24px rgba(56, 189, 248, 0.35);
-            color: #0f172a;
+            box-shadow: 0 10px 24px rgba(126, 249, 255, 0.35);
+            color: #0a1220;
         }
         .hero-section {
             position: relative;
-            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.2), transparent 50%),
-                        linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #1f4ed8 100%);
-            color: #e2e8f0;
+            background: radial-gradient(circle at top left, rgba(0, 229, 255, 0.22), transparent 55%),
+                        radial-gradient(circle at bottom right, rgba(224, 64, 251, 0.18), transparent 50%),
+                        linear-gradient(135deg, #05070A 0%, #0a1220 45%, #121c2e 100%);
+            color: #E0FBFC;
             padding: 110px 0 90px;
             overflow: hidden;
         }
@@ -1176,12 +1051,12 @@
             animation: heroOrbs 18s ease-in-out infinite;
         }
         .hero-section::before {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.65), rgba(59, 130, 246, 0.2));
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.55), rgba(126, 249, 255, 0.2));
             top: -120px;
             right: -80px;
         }
         .hero-section::after {
-            background: linear-gradient(135deg, rgba(129, 140, 248, 0.55), rgba(59, 130, 246, 0.25));
+            background: linear-gradient(135deg, rgba(224, 64, 251, 0.5), rgba(157, 0, 255, 0.25));
             bottom: -140px;
             left: -100px;
             animation-delay: -7s;
@@ -1333,7 +1208,7 @@
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #ffffff 0%, #00d4aa 50%, #0066ff 100%);
+            background: linear-gradient(135deg, #E0FBFC 0%, #00E5FF 45%, #E040FB 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1703,7 +1578,7 @@
         .footer-logo {
             width: 50px;
             height: 50px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00E5FF 0%, #9D00FF 100%);
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
@@ -1786,7 +1661,7 @@
         .floating-cta-link:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 20px rgba(0, 212, 170, 0.6), 0 4px 12px rgba(0, 102, 255, 0.4);
-            color: #0f172a;
+            color: #0a1220;
             text-decoration: none;
         }
         .floating-cta-link .cta-text {
@@ -2174,7 +2049,7 @@
         
         /* Blog Content Styles */
         .blog-content {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.8;
             font-size: 1.1rem;
             color: #374151;
@@ -2625,7 +2500,7 @@
             font-size: 1.1rem;
         }
         .home-projects-section {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #121c2e 0%, #1e40af 100%);
             padding: 60px 0;
             color: white;
         }
@@ -2651,7 +2526,7 @@
             color: #cbd5e0;
         }
         .technologies-section {
-            background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+            background: linear-gradient(180deg, #f2fbfc 0%, #e8f8fa 100%);
             padding: 100px 0;
             position: relative;
             overflow: hidden;
@@ -2663,7 +2538,7 @@
             right: -50px;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(0, 229, 255, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 0;
         }
@@ -2674,7 +2549,7 @@
             left: -50px;
             width: 300px;
             height: 300px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(224, 64, 251, 0.08) 0%, transparent 70%);
             border-radius: 50%;
             z-index: 0;
         }
@@ -2687,7 +2562,7 @@
         .technologies-title {
             font-size: clamp(1.75rem, 5vw, 3rem);
             font-weight: 800;
-            color: #0f172a;
+            color: #0a1220;
             margin-bottom: 15px;
             background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 100%);
             background-clip: text;
@@ -2745,23 +2620,33 @@
             transition: transform 0.3s ease;
             background: #f8fafc; 
             color: #64748b;
+            overflow: hidden;
+            flex-shrink: 0;
         }
         .tech-card:hover .tech-icon {
             transform: scale(1.1) rotate(5deg);
         }
-        .tech-icon.blue { background: rgba(0, 102, 255, 0.1); color: var(--primary); }
-        .tech-icon.purple { background: rgba(168, 85, 247, 0.1); color: #a855f7; }
-        .tech-icon.purple-light { background: rgba(192, 132, 252, 0.1); color: #c084fc; }
-        .tech-icon.yellow { background: rgba(251, 191, 36, 0.1); color: #fbbf24; }
-        .tech-icon.pink { background: rgba(244, 114, 182, 0.1); color: #f472b6; }
-        .tech-icon.python { background: rgba(0, 102, 255, 0.1); color: var(--primary); }
-        .tech-icon.tableau { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+        .tech-icon.blue { background: rgba(0, 229, 255, 0.12); color: var(--primary); }
+        .tech-icon.purple { background: rgba(224, 64, 251, 0.12); color: #E040FB; }
+        .tech-icon.purple-light { background: rgba(255, 183, 255, 0.15); color: #FFB7FF; }
+        .tech-icon.yellow { background: rgba(126, 249, 255, 0.15); color: #7EF9FF; }
+        .tech-icon.pink { background: rgba(224, 64, 251, 0.12); color: #E040FB; }
+        .tech-icon.python { background: rgba(0, 229, 255, 0.12); color: var(--primary); }
+        .tech-icon.tableau { background: rgba(157, 0, 255, 0.12); color: #9D00FF; }
         
         .tech-icon img,
         .tech-icon-image {
             width: 48px;
             height: 48px;
             object-fit: contain;
+        }
+        .tech-icon .tech-icon-media {
+            width: 48px;
+            height: 48px;
+        }
+        .tech-icon .tech-icon-initials {
+            font-size: 1.1rem;
+            font-weight: 800;
         }
         .tech-name {
             font-weight: 700;
@@ -2786,7 +2671,7 @@
             gap: 8px;
             padding: 10px 24px;
             border-radius: 50px;
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(0, 229, 255, 0.1);
             position: relative;
             z-index: 10;
             pointer-events: auto;
@@ -2911,8 +2796,8 @@
             font-size: 1rem;
         }
         .contact-form-card .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #00E5FF;
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
         }
         .contact-form-card .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -3071,8 +2956,8 @@
         }
         
         .input-wrapper.input-focused .input-field {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #00E5FF;
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.1);
         }
         
         .input-focus-ring {
@@ -3081,7 +2966,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(90deg, #00E5FF, #8b5cf6);
             transform: scaleX(0);
             transform-origin: left;
             opacity: 0;
@@ -3118,10 +3003,10 @@
         }
         .about-hero-section {
             position: relative;
-            background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 55%),
-                        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.2), transparent 50%),
-                        linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #1f4ed8 100%);
-            color: #e2e8f0;
+            background: radial-gradient(circle at top left, rgba(0, 229, 255, 0.25), transparent 55%),
+                        radial-gradient(circle at bottom right, rgba(224, 64, 251, 0.2), transparent 50%),
+                        linear-gradient(135deg, #05070A 0%, #0a1220 45%, #121c2e 100%);
+            color: #E0FBFC;
             padding: 110px 0 90px;
             overflow: hidden;
         }
@@ -3137,12 +3022,12 @@
             animation: heroOrbs 20s ease-in-out infinite;
         }
         .about-hero-section::before {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.55), rgba(14, 165, 233, 0.2));
+            background: linear-gradient(135deg, rgba(224, 64, 251, 0.55), rgba(0, 229, 255, 0.2));
             top: -100px;
             left: -80px;
         }
         .about-hero-section::after {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.65), rgba(59, 130, 246, 0.25));
+            background: linear-gradient(135deg, rgba(126, 249, 255, 0.65), rgba(0, 229, 255, 0.25));
             bottom: -120px;
             right: -90px;
             animation-delay: -6s;
@@ -3246,7 +3131,7 @@
         .mission-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00E5FF 0%, #9D00FF 100%);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -3284,14 +3169,14 @@
             height: 100%;
         }
         .value-card:hover {
-            border-color: #667eea;
+            border-color: #00E5FF;
             transform: translateY(-5px);
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
         }
         .value-icon {
             width: 70px;
             height: 70px;
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            background: linear-gradient(135deg, #e0f2fe 0%, #7EF9FF 100%);
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -3321,7 +3206,7 @@
  
         /* Documentation Page */
         .documentation-hero {
-            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #121c2e 0%, #1e40af 100%);
             color: white;
             padding: 120px 0 90px;
         }
@@ -3350,7 +3235,7 @@
             box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
             padding: 40px;
             margin-bottom: 30px;
-            border-left: 5px solid #1e3a8a;
+            border-left: 5px solid #121c2e;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .documentation-card:hover {
@@ -3359,7 +3244,7 @@
         }
         .documentation-card .section-heading {
             font-size: 1.5rem;
-            color: #1e3a8a;
+            color: #121c2e;
             margin-bottom: 15px;
             font-weight: 700;
         }
@@ -3419,8 +3304,8 @@
         /* Footer */
         .site-footer {
             position: relative;
-            background: linear-gradient(160deg, #01010c 0%, #04132b 55%, #031c44 100%);
-            color: #e2e8f0;
+            background: linear-gradient(160deg, #05070A 0%, #0a1220 55%, #121c2e 100%);
+            color: #E0FBFC;
             overflow: hidden;
             padding: 80px 0 40px;
             margin-top: 120px;
@@ -3433,9 +3318,9 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(circle at 20% 30%, rgba(56, 189, 248, 0.15), transparent 35%),
-                radial-gradient(circle at 70% 20%, rgba(14, 165, 233, 0.18), transparent 40%),
-                radial-gradient(circle at 60% 70%, rgba(3, 169, 244, 0.12), transparent 45%);
+                radial-gradient(circle at 20% 30%, rgba(0, 229, 255, 0.15), transparent 35%),
+                radial-gradient(circle at 70% 20%, rgba(126, 249, 255, 0.14), transparent 40%),
+                radial-gradient(circle at 60% 70%, rgba(224, 64, 251, 0.12), transparent 45%);
             z-index: 0;
             opacity: 0.95;
         }
@@ -3468,16 +3353,17 @@
         }
 
         .site-footer a {
-            color: #9ecbff;
+            color: #7EF9FF;
             transition: color 0.3s ease, padding-left 0.3s ease;
         }
 
         .site-footer a:hover {
-            color: #38bdf8;
+            color: #7EF9FF;
             padding-left: 4px;
         }
     </style>
-    <link rel="stylesheet" href="{{ asset('css/cloudlab.css') }}?v={{ file_exists(public_path('css/cloudlab.css')) ? filemtime(public_path('css/cloudlab.css')) : '1' }}">
+    <link rel="stylesheet" href="{{ \App\Support\Branding::assetUrl('css/brand.css') }}?v={{ file_exists(public_path('css/brand.css')) ? filemtime(public_path('css/brand.css')) : '1' }}" onerror="this.onerror=null;this.href='{{ \App\Support\Branding::alternateAssetUrl('css/brand.css') }}';">
+    <link rel="stylesheet" href="{{ \App\Support\Branding::assetUrl('css/cloudlab.css') }}?v={{ file_exists(public_path('css/cloudlab.css')) ? filemtime(public_path('css/cloudlab.css')) : '1' }}" onerror="this.onerror=null;this.href='{{ \App\Support\Branding::alternateAssetUrl('css/cloudlab.css') }}';">
     @stack('styles')
 </head>
 <body class="{{ request()->routeIs('home') ? 'cl-home-body' : '' }}">
@@ -3497,16 +3383,12 @@
                 <!-- Column 1: CloudLab Latam -->
                 <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
                     <div class="footer-brand">
-                        @php
-                            $footerLogo = @file_exists(public_path('images/logo-cl.png'))
-                                ? asset('images/logo-cl.png')
-                                : null;
-                        @endphp
-                        @if($footerLogo)
-                            <img src="{{ $footerLogo }}" alt="CloudLab Latam" class="footer-logo-img" width="48" height="48">
-                        @else
-                            <div class="footer-logo">CL</div>
-                        @endif
+                        @include('components.brand-logo', [
+                            'class' => 'footer-logo-img',
+                            'width' => 80,
+                            'height' => 64,
+                            'loading' => 'lazy',
+                        ])
                         <h5>CloudLab Latam</h5>
                     </div>
                     <p style="color: #cbd5e0; line-height: 1.6;">
@@ -3520,11 +3402,11 @@
                         <h5>{{ __('messages.footer.quick_links') }}</h5>
                         <ul>
                             <li><a href="{{ route('home') }}">{{ __('messages.nav.home') }}</a></li>
+                            <li><a href="{{ route('services.index') }}">{{ __('messages.nav.services') }}</a></li>
                             <li><a href="{{ route('blogs.index') }}">{{ __('messages.nav.blog') }}</a></li>
                             <li><a href="{{ route('projects.index') }}">{{ __('messages.nav.projects') }}</a></li>
-                            <li><a href="#about">{{ __('messages.nav.about') }}</a></li>
-                            <li><a href="#technologies">{{ __('messages.nav.technologies') }}</a></li>
-                            <li><a href="#contact">{{ __('messages.nav.contact') }}</a></li>
+                            <li><a href="{{ route('about.index') }}">{{ __('messages.nav.about') }}</a></li>
+                            <li><a href="{{ route('public.technologies.index') }}">{{ __('messages.nav.technologies') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -3535,8 +3417,11 @@
                         <h5>{{ __('messages.footer.resources') }}</h5>
                         <ul>
                             <li><a href="{{ route('documentation.index') }}">{{ __('messages.footer.documentation') }}</a></li>
-                            <li><a href="#support">{{ __('messages.footer.support') }}</a></li>
-                            <li><a href="#contact-us">{{ __('messages.footer.contact_us') }}</a></li>
+                            @if(\Illuminate\Support\Facades\Route::has('cookies.index'))
+                            <li><a href="{{ route('cookies.index') }}">{{ __('messages.footer.cookies') }}</a></li>
+                            @endif
+                            <li><a href="{{ route('home') }}#contacto">{{ __('messages.footer.support') }}</a></li>
+                            <li><a href="{{ route('home') }}#contacto">{{ __('messages.footer.contact_us') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -3556,7 +3441,7 @@
                             </p>
                             <p>
                                 <strong>{{ __('messages.footer.address') }}:</strong><br>
-                                Latin America
+                                {{ __('messages.footer.address_value') }}
                             </p>
                         </div>
                     </div>
@@ -3572,7 +3457,7 @@
 
     <!-- Floating CTA Button -->
     <div class="floating-cta-button">
-        <a href="{{ route('contact.index') }}" 
+        <a href="{{ route('home') }}#contacto" 
            class="floating-cta-link"
            aria-label="{{ __('messages.cta.free_consultation') }}">
             <i class="bi bi-calendar-check me-2"></i>
@@ -3580,13 +3465,13 @@
         </a>
     </div>
 
-    <!-- Floating WhatsApp Button -->
-    <div class="whatsapp-float">
-        <a href="https://wa.me/573208156396" target="_blank" rel="noopener noreferrer" aria-label="{{ __('messages.whatsapp.contact_us') }}">
-            <i class="bi bi-whatsapp"></i>
-            <span class="whatsapp-text">{{ __('messages.whatsapp.contact_us') }}</span>
-        </a>
-    </div>
+    @if(View::exists('components.cookie-consent'))
+        @include('components.cookie-consent')
+    @endif
+
+    @if(View::exists('components.cloud-bot'))
+        @include('components.cloud-bot')
+    @endif
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
     
@@ -3594,39 +3479,7 @@
         // Ensure mobile menu is closed and page is clickable on load
         (function() {
             function ensurePageIsClickable() {
-                // Close mobile menu if open
-                const mobileMenu = document.getElementById('mobile-menu');
-                if (mobileMenu) {
-                    // Force close menu
-                    mobileMenu.classList.add('hidden');
-                    mobileMenu.classList.remove('mobile-menu-open');
-                    mobileMenu.style.pointerEvents = 'none';
-                    mobileMenu.style.display = 'none';
-                }
-                
-                // Ensure body scroll is enabled
                 document.body.style.overflow = '';
-                
-                // Ensure all links and buttons are clickable
-                const allLinks = document.querySelectorAll('a, button, .btn, [role="button"]');
-                allLinks.forEach(element => {
-                    if (!element.hasAttribute('disabled') && element.tagName !== 'SCRIPT') {
-                        element.style.pointerEvents = 'auto';
-                        element.style.cursor = 'pointer';
-                        // Remove any event listeners that might be blocking
-                        if (element.onclick === null) {
-                            element.onclick = null;
-                        }
-                    }
-                });
-                
-                // Ensure navigation links work
-                const navLinks = document.querySelectorAll('.nav-link-item, .mobile-menu-link');
-                navLinks.forEach(link => {
-                    link.style.pointerEvents = 'auto';
-                    link.style.cursor = 'pointer';
-                    link.style.zIndex = '100';
-                });
             }
             
             // Run immediately
@@ -3831,6 +3684,25 @@
         };
     </script>
     
+    <script nonce="{{ $cspNonce ?? '' }}">
+        function clTechIconFallback(img) {
+            const step = parseInt(img.dataset.step || '0', 10);
+            const fallback = img.dataset.fallback;
+
+            if (step === 0 && fallback) {
+                img.dataset.step = '1';
+                img.src = fallback;
+                return;
+            }
+
+            img.style.display = 'none';
+            const initials = img.parentElement?.querySelector('.tech-icon-initials');
+            if (initials) {
+                initials.classList.remove('is-hidden');
+            }
+        }
+    </script>
+
     <script src="{{ asset('js/card-glow.js') }}" defer></script>
     @stack('scripts')
 </body>

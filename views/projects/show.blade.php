@@ -1,30 +1,30 @@
 @extends('layouts.app')
 
-@section('title', $project->title . ' - CloudLab Latam')
+@section('title', $project->translated('title') . ' - CloudLab Latam')
 
 @section('content')
 <div class="container my-5">
     <div class="row">
         <div class="col-md-8 scroll-animate fade-in">
-            @if($project->image)
-            <img src="{{ asset('storage/' . $project->image) }}" class="img-fluid mb-4 scroll-animate slide-up stagger-1" alt="{{ $project->title }}" loading="lazy">
+            @if($project->image_url)
+            <img src="{{ $project->image_url }}" class="img-fluid mb-4 scroll-animate slide-up stagger-1" alt="{{ $project->translated('title') }}" loading="lazy">
             @endif
             
-            <h1 class="scroll-animate slide-up stagger-2">{{ $project->title }}</h1>
+            <h1 class="scroll-animate slide-up stagger-2">{{ $project->translated('title') }}</h1>
             
-            @if($project->description)
-            <p class="lead">{{ $project->description }}</p>
+            @if($project->translated('description') !== '')
+            <p class="lead">{{ $project->translated('description') }}</p>
             @endif
             
-            @if($project->content)
-            <div class="content mb-4">
-                {!! nl2br(e($project->content)) !!}
+            @if($project->translated('content') !== '')
+            <div class="project-content content mb-4">
+                {!! $project->translated('content') !!}
             </div>
             @endif
             
-            @if($project->technologies)
+            @if($project->translated('technologies') !== '')
             <div class="mb-4">
-                <strong>{{ __('messages.projects.technologies') }}:</strong> {{ $project->technologies }}
+                <strong>{{ __('messages.projects.technologies') }}:</strong> {{ $project->translated('technologies') }}
             </div>
             @endif
             
@@ -48,9 +48,9 @@
             <div class="list-group">
                 @foreach($relatedProjects as $index => $relatedProject)
                 <a href="{{ route('projects.show', $relatedProject->slug) }}" class="list-group-item list-group-item-action scroll-animate fade-in stagger-{{ min($index + 1, 6) }}">
-                    <h6>{{ $relatedProject->title }}</h6>
-                    @if($relatedProject->description)
-                    <small class="text-muted">{{ Str::limit($relatedProject->description, 60) }}</small>
+                    <h6>{{ $relatedProject->translated('title') }}</h6>
+                    @if($relatedProject->translated('description') !== '')
+                    <small class="text-muted">{{ Str::limit($relatedProject->translated('description'), 60) }}</small>
                     @endif
                 </a>
                 @endforeach

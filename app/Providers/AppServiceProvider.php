@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,9 +24,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Set locale from session
-        if (session()->has('locale')) {
+        Paginator::useBootstrapFive();
+
+        if (session()->has('locale') && \App\Support\LocalizedUrl::isLocale(session('locale'))) {
             app()->setLocale(session('locale'));
         }
+
+        \Illuminate\Support\Facades\URL::defaults([
+            'locale' => \App\Support\LocalizedUrl::isLocale(app()->getLocale())
+                ? app()->getLocale()
+                : config('seo.default_locale', 'es'),
+        ]);
     }
 }

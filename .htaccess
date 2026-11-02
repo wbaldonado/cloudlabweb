@@ -1,0 +1,7 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Hostinger: if document root is laravel_app (not laravel_app/public),
+    # send all requests to the public/ folder so /images/... URLs work.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

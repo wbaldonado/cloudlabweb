@@ -1,0 +1,48 @@
+CloudLab Latam — Email deliverability (anti-spam) checklist
+===========================================================
+
+Code alone cannot guarantee inbox placement. Gmail/Yahoo/Outlook require
+authenticated domain mail. Do this in Hostinger DNS + mailbox:
+
+1) Send only from your domain mailbox
+   MAIL_FROM_ADDRESS=info@cloudlablatam.com
+   MAIL_USERNAME=info@cloudlablatam.com
+   (same domain as the website)
+
+2) SPF (TXT on cloudlablatam.tech)
+   Hostinger usually provides this automatically. Example:
+   v=spf1 include:_spf.mail.hostinger.com ~all
+
+3) DKIM
+   Enable DKIM in Hostinger Email → Domain → DKIM.
+   Publish the TXT record Hostinger shows.
+
+4) DMARC (TXT on _dmarc.cloudlablatam.tech)
+   v=DMARC1; p=none; rua=mailto:info@cloudlablatam.com; fo=1
+   Later tighten to p=quarantine then p=reject.
+
+5) APP_URL must be https://cloudlablatam.tech
+   Tracking links (/t/o /t/c /t/u) must be publicly reachable over HTTPS.
+
+6) Campaign best practices (built into CRM)
+   - Multipart HTML + plain text
+   - List-Unsubscribe header + one-click
+   - Physical company footer + unsubscribe link
+   - Tracked CTA button
+   - Open pixel (unique opens)
+   - Suppression list (unsubscribes skipped)
+
+7) Content tips
+   - Avoid ALL CAPS subjects, too many !!!, spam words
+   - Prefer personalization ({{first_name}})
+   - Warm up: send small batches first (CRM sends 50/click)
+
+Install DB
+----------
+php artisan migrate
+OR import database/sql/crm_campaigns.sql in phpMyAdmin
+AND import database/sql/crm_email_templates.sql (plantillas HTML reutilizables)
+
+Admin UI
+--------
+/admin/crm/campaigns

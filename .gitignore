@@ -24,3 +24,8 @@ yarn-error.log
 /_dump_ops.py
 /_extract_all.py
 /_extract_apply.py
+/crm_flask/venv
+/crm_flask/.env
+/public/home-diag.php
+/database/sql/create_admin_user.sql
+/database/sql/fix_admin_login.sql

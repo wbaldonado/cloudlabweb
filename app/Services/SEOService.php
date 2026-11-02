@@ -15,10 +15,12 @@ class SEOService
         $baseUrl = config('app.url');
         
         return [
-            'title' => 'CloudLab Latam - Cloud Automation & Digital Transformation',
-            'description' => $locale === 'es' 
-                ? 'CloudLab Latam: Automatización inteligente en la nube y transformación digital para empresas en América Latina. Potencia la productividad y reduce costos con nuestras soluciones de automatización empresarial.'
-                : 'CloudLab Latam: Intelligent cloud automation and digital transformation for businesses in Latin America. Boost productivity and reduce costs with our enterprise automation solutions.',
+            'title' => $locale === 'es'
+                ? 'CloudLab Latam | Power Automate, Power BI y Microsoft Fabric'
+                : 'CloudLab Latam | Power Automate, Power BI and Microsoft Fabric',
+            'description' => $locale === 'es'
+                ? 'Automatizamos procesos con Power Automate, analítica en Power BI e ingeniería de datos con Microsoft Fabric para tu empresa. Solicita hoy una consulta gratuita.'
+                : 'We automate business processes with Power Automate, analytics in Power BI and data engineering on Microsoft Fabric. Request your free consultation today.',
             'keywords' => $locale === 'es'
                 ? 'automatización en la nube, transformación digital, cloud automation, inteligencia artificial, IA, procesos empresariales, América Latina, Latam, eficiencia operacional, trabajo colaborativo'
                 : 'cloud automation, digital transformation, artificial intelligence, AI, business processes, Latin America, Latam, operational efficiency, collaborative work',
@@ -31,11 +33,10 @@ class SEOService
             'revisit_after' => '7 days',
             'rating' => 'general',
             'distribution' => 'global',
-            'language' => $locale,
-            'geo_region' => 'LATAM',
-            'geo_placename' => 'Latin America',
+            'language' => $locale === 'es' ? 'es-CO' : 'en',
+            'geo_placename' => config('seo.address_locality') . ', ' . config('seo.address_country'),
             'copyright' => 'CloudLab Latam',
-            'reply_to' => 'info@cloudlablatam.com',
+            'reply_to' => config('seo.contact_email'),
             'category' => 'Technology, Cloud Computing, Digital Transformation',
         ];
     }
@@ -52,10 +53,9 @@ class SEOService
         switch ($type) {
             case 'home':
                 return array_merge($default, [
-                    'title' => $locale === 'es'
-                        ? 'CloudLab Latam - Automatización Inteligente en la Nube'
-                        : 'CloudLab Latam - Intelligent Cloud Automation',
-                    'canonical' => $baseUrl,
+                    'title' => $default['title'],
+                    'description' => $default['description'],
+                    'canonical' => $baseUrl . '/' . $locale,
                 ]);
 
             case 'blog_list':
@@ -72,10 +72,14 @@ class SEOService
             case 'blog_post':
                 if (!$data) break;
                 $content = strip_tags($data->content ?? '');
-                $excerpt = $data->excerpt ?? Str::limit($content, 160);
+                $excerpt = trim((string) ($data->meta_description ?? ''));
+                if ($excerpt === '') {
+                    $excerpt = $data->excerpt ?? Str::limit($content, 160, '');
+                }
+                $seoTitle = trim((string) ($data->meta_title ?? ''));
                 return array_merge($default, [
-                    'title' => $data->title . ' - CloudLab Latam Blog',
-                    'description' => $excerpt,
+                    'title' => $seoTitle !== '' ? $seoTitle : ($data->title . ' - CloudLab Latam Blog'),
+                    'description' => Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($excerpt))), 160, ''),
                     'keywords' => $default['keywords'] . ', ' . Str::limit($data->title, 100),
                     'og_type' => 'article',
                     'og_image' => ($data->featured_image ? $baseUrl . '/storage/' . $data->featured_image : $baseUrl . '/images/logo.png'),
@@ -102,11 +106,18 @@ class SEOService
 
             case 'project_detail':
                 if (!$data) break;
-                $description = $data->description ?: strip_tags(Str::limit($data->content ?? '', 160));
-                $technologies = $data->technologies ? ', ' . $data->technologies : '';
+                $description = trim((string) $data->translated('meta_description'));
+                if ($description === '') {
+                    $description = $data->translated('description') ?: strip_tags(Str::limit($data->translated('content'), 160, ''));
+                }
+                $technologies = $data->translated('technologies');
+                $technologies = $technologies !== '' ? ', ' . $technologies : '';
+                $title = trim((string) $data->translated('meta_title'));
                 return array_merge($default, [
-                    'title' => $data->title . ' - CloudLab Latam',
-                    'description' => $description,
+                    'title' => $title !== ''
+                        ? $title
+                        : ($data->translated('title') . ' - CloudLab Latam'),
+                    'description' => Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags($description))), 160, ''),
                     'keywords' => $default['keywords'] . $technologies,
                     'og_type' => 'article',
                     'og_image' => $data->image ? $baseUrl . '/storage/' . $data->image : $baseUrl . '/images/logo.png',
@@ -159,6 +170,37 @@ class SEOService
                         : 'CloudLab Latam security and data protection policy. Committed to privacy and information protection.',
                     'canonical' => $baseUrl . '/documentation',
                 ]);
+
+            case 'services_index':
+                return array_merge($default, [
+                    'title' => $locale === 'es'
+                        ? 'Servicios de Power Platform | CloudLab Latam'
+                        : 'Power Platform Services | CloudLab Latam',
+                    'description' => $locale === 'es'
+                        ? 'Servicios de Power Automate, Power BI, Microsoft Fabric y RPA para automatizar procesos y ordenar tus datos. Pide una consulta gratuita.'
+                        : 'Power Automate, Power BI, Microsoft Fabric, and RPA services to automate processes and organize your data. Request a free consultation.',
+                ]);
+
+            case 'service':
+                if (! $data) {
+                    break;
+                }
+                return array_merge($default, [
+                    'title' => $data['meta_title'] ?? $default['title'],
+                    'description' => $data['meta_description'] ?? $default['description'],
+                    'og_type' => 'website',
+                ]);
+
+            case 'cookies':
+                return array_merge($default, [
+                    'title' => $locale === 'es'
+                        ? 'Política de Cookies - CloudLab Latam'
+                        : 'Cookie Policy - CloudLab Latam',
+                    'description' => $locale === 'es'
+                        ? 'Información sobre el uso de cookies en CloudLab Latam y cómo gestionar tus preferencias de consentimiento.'
+                        : 'Information about cookie use on CloudLab Latam and how to manage your consent preferences.',
+                    'canonical' => rtrim((string) $baseUrl, '/') . '/cookies',
+                ]);
         }
 
         return $default;
@@ -177,35 +219,29 @@ class SEOService
             '@type' => 'Organization',
             'name' => 'CloudLab Latam',
             'alternateName' => 'CloudLab Latam',
-            'url' => $baseUrl,
+            'url' => rtrim((string) $baseUrl, '/'),
             'logo' => [
                 '@type' => 'ImageObject',
-                'url' => $baseUrl . '/images/logo.png',
+                'url' => rtrim((string) $baseUrl, '/') . '/images/logo.png',
                 'width' => 512,
                 'height' => 512,
             ],
             'description' => $locale === 'es'
-                ? 'Automatización inteligente en la nube y transformación digital para empresas en América Latina'
-                : 'Intelligent cloud automation and digital transformation for businesses in Latin America',
+                ? 'Automatización de procesos y analítica de datos con Microsoft Power Platform'
+                : 'Process automation and data analytics with Microsoft Power Platform',
             'foundingDate' => '2024',
             'address' => [
                 '@type' => 'PostalAddress',
-                'addressRegion' => 'Latin America',
-                'addressCountry' => 'LATAM',
+                'addressLocality' => config('seo.address_locality'),
+                'addressCountry' => config('seo.address_country_code'),
             ],
             'contactPoint' => [
                 '@type' => 'ContactPoint',
-                'email' => 'info@cloudlablatam.com',
-                'telephone' => '+57-3208156396',
+                'email' => config('seo.contact_email'),
+                'telephone' => config('seo.phone_e164'),
                 'contactType' => 'Customer Service',
-                'areaServed' => ['LATAM', 'Latin America'],
-                'availableLanguage' => ['Spanish', 'English', 'es', 'en'],
-            ],
-            'sameAs' => [
-                // Add your social media profiles here when available
-                // 'https://twitter.com/cloudlablatam',
-                // 'https://linkedin.com/company/cloudlablatam',
-                // 'https://facebook.com/cloudlablatam',
+                'areaServed' => config('seo.address_country_code'),
+                'availableLanguage' => ['Spanish', 'English'],
             ],
             'knowsAbout' => [
                 'Cloud Computing',
@@ -213,7 +249,54 @@ class SEOService
                 'Automation',
                 'Artificial Intelligence',
                 'Business Process Optimization',
+                'Microsoft Power Platform',
+                'Power Automate',
+                'Power BI',
+                'Microsoft Fabric',
+                'RPA',
             ],
+        ];
+    }
+
+    /**
+     * Generate ProfessionalService schema (JSON-LD) for local/regional service identity.
+     */
+    public static function generateProfessionalServiceSchema(): array
+    {
+        $baseUrl = rtrim((string) config('app.url'), '/');
+        $locale = app()->getLocale();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'ProfessionalService',
+            'name' => 'CloudLab Latam',
+            'url' => $baseUrl,
+            'telephone' => config('seo.phone_e164'),
+            'email' => config('seo.contact_email'),
+            'image' => $baseUrl . '/images/logo.png',
+            'logo' => $baseUrl . '/images/logo.png',
+            'description' => $locale === 'es'
+                ? 'Automatización de procesos y analítica de datos con Microsoft Power Platform'
+                : 'Process automation and data analytics with Microsoft Power Platform',
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressLocality' => config('seo.address_locality'),
+                'addressCountry' => config('seo.address_country_code'),
+            ],
+            'areaServed' => [
+                '@type' => 'Country',
+                'name' => config('seo.address_country'),
+            ],
+            'knowsAbout' => [
+                'Microsoft Power Platform',
+                'Power Automate',
+                'Microsoft Fabric',
+                'Python Data Analytics',
+                'Cloud Computing',
+                'Digital Transformation',
+            ],
+            'availableLanguage' => ['Spanish', 'English'],
+            'priceRange' => '$$',
         ];
     }
 
@@ -234,7 +317,7 @@ class SEOService
             'description' => $locale === 'es'
                 ? 'Automatización inteligente en la nube y transformación digital para empresas en América Latina'
                 : 'Intelligent cloud automation and digital transformation for businesses in Latin America',
-            'inLanguage' => $locale === 'es' ? 'es-ES' : 'en-US',
+            'inLanguage' => $locale === 'es' ? 'es-CO' : 'en-US',
             'potentialAction' => [
                 '@type' => 'SearchAction',
                 'target' => [
@@ -279,9 +362,9 @@ class SEOService
             'dateModified' => $blog->updated_at?->toIso8601String(),
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
-                '@id' => $baseUrl . '/blogs/' . $blog->slug,
+                '@id' => self::localizedPublicUrl('/blogs/' . $blog->slug),
             ],
-            'inLanguage' => $locale === 'es' ? 'es-ES' : 'en-US',
+            'inLanguage' => $locale === 'es' ? 'es-CO' : 'en-US',
             'wordCount' => str_word_count(strip_tags($blog->content ?? '')),
             'articleSection' => 'Technology',
             'keywords' => 'Cloud Computing, Digital Transformation, Automation, Technology',
@@ -306,9 +389,9 @@ class SEOService
         $schema = [
             '@context' => 'https://schema.org',
             '@type' => 'CreativeWork',
-            'name' => $project->title,
-            'description' => $project->description ?? strip_tags(Str::limit($project->content ?? '', 200)),
-            'image' => $project->image ? $baseUrl . '/storage/' . $project->image : $baseUrl . '/images/logo.png',
+            'name' => $project->translated('title'),
+            'description' => $project->translated('description') ?: strip_tags(Str::limit($project->translated('content'), 200)),
+            'image' => $project->image_url ?: ($baseUrl . '/images/logo.png'),
             'creator' => [
                 '@type' => 'Organization',
                 'name' => 'CloudLab Latam',
@@ -316,17 +399,17 @@ class SEOService
             ],
             'dateCreated' => $project->created_at?->toIso8601String(),
             'dateModified' => $project->updated_at?->toIso8601String(),
-            'url' => $baseUrl . '/projects/' . $project->slug,
+            'url' => self::localizedPublicUrl('/projects/' . $project->slug),
             'mainEntityOfPage' => [
                 '@type' => 'WebPage',
-                '@id' => $baseUrl . '/projects/' . $project->slug,
+                '@id' => self::localizedPublicUrl('/projects/' . $project->slug),
             ],
-            'inLanguage' => $locale === 'es' ? 'es-ES' : 'en-US',
+            'inLanguage' => $locale === 'es' ? 'es-CO' : 'en-US',
         ];
         
         // Add technologies as keywords if available
-        if ($project->technologies) {
-            $schema['keywords'] = $project->technologies;
+        if ($project->translated('technologies') !== '') {
+            $schema['keywords'] = $project->translated('technologies');
         }
         
         // Add URL if available
@@ -364,5 +447,60 @@ class SEOService
             '@type' => 'BreadcrumbList',
             'itemListElement' => $breadcrumbItems,
         ];
+    }
+
+    public static function generateServiceSchema(array $service): array
+    {
+        $locale = app()->getLocale() === 'en' ? 'en' : 'es';
+        $baseUrl = \App\Support\LocalizedUrl::origin();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Service',
+            'name' => $service['h1'] ?? 'Service',
+            'serviceType' => $service['nav'] ?? $service['h1'] ?? 'Service',
+            'description' => $service['meta_description'] ?? $service['excerpt'] ?? '',
+            'url' => self::localizedPublicUrl('/servicios/' . ($service['slug'] ?? '')),
+            'provider' => [
+                '@type' => 'Organization',
+                'name' => 'CloudLab Latam',
+                'url' => $baseUrl,
+            ],
+            'areaServed' => config('seo.address_country'),
+            'inLanguage' => $locale === 'es' ? 'es-CO' : 'en',
+        ];
+    }
+
+    public static function generateFaqSchema(array $faqs): array
+    {
+        $questions = [];
+        foreach ($faqs as $faq) {
+            if (empty($faq['question']) || empty($faq['answer'])) {
+                continue;
+            }
+            $questions[] = [
+                '@type' => 'Question',
+                'name' => $faq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => $faq['answer'],
+                ],
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $questions,
+        ];
+    }
+
+    protected static function localizedPublicUrl(string $path): string
+    {
+        $locale = app()->getLocale() === 'en' ? 'en' : 'es';
+        $base = \App\Support\LocalizedUrl::origin();
+        $path = '/' . ltrim($path, '/');
+
+        return $base . '/' . $locale . ($path === '/' ? '' : $path);
     }
 }

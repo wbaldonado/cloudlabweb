@@ -1,0 +1,64 @@
+CloudLab Latam — Flask CRM deploy checklist
+============================================
+
+The Flask CRM replaces the Laravel CRM dashboard UI while sharing the same
+MySQL database and admin users. Email campaigns remain in Laravel for now.
+
+Local URL:  http://127.0.0.1:5001/admin/crm
+Production: https://crm.cloudlablatam.tech/admin/crm  (subdomain recommended)
+
+STEP 1 — Upload crm_flask/ folder
+-----------------------------------
+Upload the entire crm_flask/ directory to the server, e.g.:
+  /home/u123456789/crm_flask/
+
+STEP 2 — Python environment (SSH or hPanel terminal)
+------------------------------------------------------
+  cd crm_flask
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+  cp .env.example .env
+  # Edit .env: DB_*, MAIL_*, CRM_IMAP_*, LARAVEL_ADMIN_URL
+
+STEP 3 — Run with Gunicorn (production)
+---------------------------------------
+  venv/bin/gunicorn -w 2 -b 127.0.0.1:5001 wsgi:app --timeout 120
+
+Or configure Passenger/cPanel Python app pointing to run.py / wsgi.
+
+STEP 4 — Laravel .env
+---------------------
+Add to Laravel .env on the main site:
+  CRM_FLASK_URL=https://crm.cloudlablatam.tech/admin/crm
+
+Upload:
+  config/app.php
+  views/admin/layouts/app.blade.php
+
+Clear Laravel cache:
+  Delete bootstrap/cache/config.php
+
+Admin sidebar "CRM Dashboard" will open the Flask app in a new tab.
+
+STEP 5 — IMAP cron (reply detection)
+------------------------------------
+*/10 * * * * cd /path/to/crm_flask && venv/bin/flask fetch-inbox >> /dev/null 2>&1
+
+Set FLASK_APP=run.py in crontab or .env if needed.
+
+STEP 6 — Database
+-----------------
+Same tables as Laravel CRM — no separate schema:
+  crm_companies, crm_contacts, crm_deals, crm_activities, crm_email_messages
+
+Import database/sql/install_missing_tables.sql if tables are missing.
+
+STEP 7 — Test
+-------------
+1. Flask login: https://crm.cloudlablatam.tech/admin/crm/login
+   Credentials: same Laravel admin (admin@cloudlablatam.com)
+2. CRUD contacts, companies, deals, activities
+3. Send test email to a contact (SMTP in .env)
+4. Laravel admin → CRM Dashboard link opens Flask app
+5. Laravel admin → Campañas email still works (Laravel routes)

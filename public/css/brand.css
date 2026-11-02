@@ -1,0 +1,45 @@
+/* CloudLab Latam — brand palette (matches logo: cyan + magenta on deep black) */
+:root {
+    --brand-black: #05070a;
+    --brand-ink: #0a1220;
+    --brand-ink-soft: #121c2e;
+    --brand-cyan: #00e5ff;
+    --brand-cyan-soft: #7ef9ff;
+    --brand-cyan-dark: #00a8c5;
+    --brand-magenta: #e040fb;
+    --brand-purple: #9d00ff;
+    --brand-magenta-soft: #ffb7ff;
+    --brand-text-on-dark: #e0fbfc;
+    --brand-text-muted-on-dark: #8eb8bc;
+
+    /* Site tokens (cloudlab.css + pages) */
+    --cl-black: var(--brand-black);
+    --cl-navy: var(--brand-black);
+    --cl-navy-light: var(--brand-ink);
+    --cl-primary: var(--brand-cyan);
+    --cl-primary-hover: var(--brand-cyan-dark);
+    --cl-secondary: var(--brand-magenta);
+    --cl-secondary-hover: var(--brand-purple);
+    --cl-accent: var(--brand-purple);
+    --cl-text: #0a1220;
+    --cl-text-muted: #4a6670;
+    --cl-text-light: var(--brand-text-on-dark);
+    --cl-bg: #f2fbfc;
+    --cl-bg-alt: #e8f8fa;
+    --cl-card: #ffffff;
+    --cl-border: rgba(0, 229, 255, 0.2);
+    --cl-shadow: 0 8px 30px rgba(5, 7, 10, 0.1);
+    --cl-radius: 14px;
+    --cl-gradient: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-purple) 100%);
+    --cl-gradient-soft: linear-gradient(135deg, var(--brand-cyan-soft) 0%, var(--brand-magenta-soft) 100%);
+    --cl-glow-cyan: rgba(0, 229, 255, 0.45);
+    --cl-glow-magenta: rgba(224, 64, 251, 0.4);
+    --cl-glow-purple: rgba(157, 0, 255, 0.35);
+
+    /* Legacy aliases used in layouts/app.blade.php inline CSS */
+    --primary: var(--brand-cyan);
+    --secondary: var(--brand-magenta);
+    --dark: var(--brand-black);
+    --light: var(--brand-text-on-dark);
+    --accent: var(--brand-purple);
+}

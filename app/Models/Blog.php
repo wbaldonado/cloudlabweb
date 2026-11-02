@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\PublicMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -14,6 +15,8 @@ class Blog extends Model
         'title',
         'slug',
         'excerpt',
+        'meta_title',
+        'meta_description',
         'content',
         'featured_image',
         'is_published',
@@ -180,16 +183,11 @@ class Blog extends Model
      */
     public function getFeaturedImageUrlAttribute()
     {
-        if (!$this->featured_image) {
-            return null;
-        }
-        
-        $url = asset('storage/' . $this->featured_image);
         $version = $this->updated_at ? $this->updated_at->timestamp : time();
-        
-        return $url . '?v=' . $version;
+
+        return PublicMedia::url($this->featured_image, $version);
     }
-    
+
     /**
      * Get the featured image URL without version (for backward compatibility).
      *
@@ -197,10 +195,6 @@ class Blog extends Model
      */
     public function getFeaturedImageUrlPlainAttribute()
     {
-        if (!$this->featured_image) {
-            return null;
-        }
-        
-        return asset('storage/' . $this->featured_image);
+        return PublicMedia::url($this->featured_image);
     }
 }

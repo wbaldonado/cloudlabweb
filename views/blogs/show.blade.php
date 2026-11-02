@@ -12,10 +12,9 @@
             <article class="scroll-animate fade-in">
                 @if($blog->featured_image_url)
                     <img src="{{ $blog->featured_image_url }}" 
-                         class="img-fluid mb-4 scroll-animate slide-up stagger-1" 
+                         class="img-fluid mb-4 scroll-animate slide-up stagger-1 blog-featured-image" 
                          alt="{{ $blog->title }}" 
                          loading="lazy"
-                         style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
                          onerror="this.onerror=null; this.src='{{ $placeholderImageUrl }}';">
                 @endif
                 

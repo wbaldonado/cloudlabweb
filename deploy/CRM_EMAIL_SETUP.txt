@@ -1,0 +1,108 @@
+# CRM Email — Free setup (Hostinger SMTP + IMAP)
+
+No paid API required. Uses your existing Hostinger mailbox.
+
+## 1. Database
+
+Run in phpMyAdmin:
+- `database/sql/crm_email_messages.sql`
+  OR re-run `database/sql/install_missing_tables.sql`
+
+Or SSH:
+```bash
+php artisan migrate --force
+```
+
+## 2. .env (on server)
+
+IMPORTANT: if MAIL_PASSWORD contains `[` `]` `#` `!` `$` `"` or spaces,
+wrap it in double quotes. Without quotes, Laravel may read a truncated password
+and SMTP auth will fail.
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.hostinger.com
+# Preferred on Hostinger:
+MAIL_PORT=587
+MAIL_ENCRYPTION=tls
+# Alternative:
+# MAIL_PORT=465
+# MAIL_ENCRYPTION=ssl
+MAIL_USERNAME=info@cloudlablatam.com
+MAIL_PASSWORD="your_mailbox_password"
+MAIL_FROM_ADDRESS=info@cloudlablatam.com
+MAIL_FROM_NAME="${APP_NAME}"
+
+CRM_IMAP_ENABLED=true
+CRM_IMAP_HOST=imap.hostinger.com
+CRM_IMAP_PORT=993
+CRM_IMAP_ENCRYPTION=ssl
+CRM_IMAP_USERNAME=info@cloudlablatam.com
+CRM_IMAP_PASSWORD="your_mailbox_password"
+CRM_NOTIFY_EMAIL=admin@cloudlablatam.com
+CRM_MESSAGE_ID_DOMAIN=cloudlablatam.tech
+```
+
+After editing `.env`, clear config cache:
+```bash
+php artisan config:clear
+php artisan cache:clear
+```
+Or delete `bootstrap/cache/config.php` via File Manager.
+
+## 3. Enable PHP IMAP (Hostinger)
+
+hPanel → PHP Configuration → enable **imap** extension (if not already on).
+
+## 4. Cron job (reply detection)
+
+hPanel → Cron Jobs → add:
+
+```
+*/10 * * * * cd /home/u987711641/domains/cloudlablatam.tech/laravel_app && php artisan crm:fetch-inbox >> /dev/null 2>&1
+```
+
+Adjust path to your `laravel_app` folder.
+
+## 5. How to use
+
+1. CRM Dashboard → contact row → **Email**
+2. Write subject + message → **Enviar correo**
+3. Lead replies to your mailbox
+4. Within ~10 min: CRM activity created + email to `CRM_NOTIFY_EMAIL`
+
+## 6. Test manually
+
+SSH (or deploy artisan runner):
+```bash
+php artisan tinker
+>>> Mail::raw('CRM SMTP test', fn ($m) => $m->to('you@example.com')->subject('CRM test'));
+```
+
+Or inbox poll:
+```bash
+php artisan crm:fetch-inbox
+```
+
+If send fails, open `storage/logs/laravel.log` and look for SMTP / authentication errors.
+
+## Files to upload
+
+```
+config/crm.php
+app/Models/CRM/EmailMessage.php
+app/Support/CrmEmail.php
+app/Support/CrmImapInbox.php
+app/Support/CrmPresenter.php
+app/Mail/CrmOutboundEmail.php
+app/Mail/CrmReplyNotification.php
+app/Http/Controllers/Admin/CRM/ContactEmailController.php
+app/Console/Commands/CrmFetchInbox.php
+app/Console/Kernel.php
+routes/web.php
+views/emails/crm_outbound.blade.php
+views/emails/crm_reply_notification.blade.php
+views/admin/crm/dashboard.blade.php
+views/admin/crm/_modals.blade.php
+public/js/crm-dashboard.js
+```

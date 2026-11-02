@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Technology;
+use App\Support\PublicMedia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Throwable;
 
 class TechnologyController extends Controller
 {
@@ -36,6 +38,7 @@ class TechnologyController extends Controller
     {
         return view('admin.technologies.create', [
             'colorOptions' => $this->colorOptions(),
+            'technology' => new Technology(),
         ]);
     }
 
@@ -46,11 +49,21 @@ class TechnologyController extends Controller
             'description' => ['nullable', 'string'],
             'color_class' => ['required', Rule::in($this->colorOptions())],
             'display_order' => ['nullable', 'integer', 'min:0'],
-            'icon' => ['required', 'file', 'mimetypes:image/svg+xml', 'max:2048'],
+            'icon' => ['required', 'file', 'max:2048', 'mimes:svg,png,jpg,jpeg,webp'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
-        $iconPath = $request->file('icon')->store('technologies', 'public');
+        try {
+            $iconPath = PublicMedia::storeImage($request->file('icon'), 'technologies');
+        } catch (Throwable $e) {
+            Log::error('Technology icon upload failed', ['error' => $e->getMessage()]);
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'icon' => 'Could not save the icon file. Ensure public/images/technologies is writable on the server.',
+                ]);
+        }
 
         Technology::create([
             'name' => $validated['name'],
@@ -79,7 +92,7 @@ class TechnologyController extends Controller
             'description' => ['nullable', 'string'],
             'color_class' => ['required', Rule::in($this->colorOptions())],
             'display_order' => ['nullable', 'integer', 'min:0'],
-            'icon' => ['nullable', 'file', 'mimetypes:image/svg+xml', 'max:2048'],
+            'icon' => ['nullable', 'file', 'max:2048', 'mimes:svg,png,jpg,jpeg,webp'],
             'is_active' => ['nullable', 'boolean'],
         ]);
 
@@ -92,10 +105,18 @@ class TechnologyController extends Controller
         ];
 
         if ($request->hasFile('icon')) {
-            if ($technology->icon_path && Storage::disk('public')->exists($technology->icon_path)) {
-                Storage::disk('public')->delete($technology->icon_path);
+            try {
+                PublicMedia::delete($technology->icon_path);
+                $data['icon_path'] = PublicMedia::storeImage($request->file('icon'), 'technologies');
+            } catch (Throwable $e) {
+                Log::error('Technology icon update failed', ['error' => $e->getMessage()]);
+
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'icon' => 'Could not save the icon file. Check storage permissions on the server.',
+                    ]);
             }
-            $data['icon_path'] = $request->file('icon')->store('technologies', 'public');
         }
 
         $technology->update($data);
@@ -105,12 +126,11 @@ class TechnologyController extends Controller
 
     public function destroy(Technology $technology)
     {
-        if ($technology->icon_path && Storage::disk('public')->exists($technology->icon_path)) {
-            Storage::disk('public')->delete($technology->icon_path);
-        }
+        PublicMedia::delete($technology->icon_path);
 
         $technology->delete();
 
         return redirect()->route('admin.technologies.index')->with('success', 'Technology deleted successfully.');
     }
+
 }

@@ -12,10 +12,9 @@
             <article class="scroll-animate fade-in">
                 @if($blog->featured_image_url)
                     <img src="{{ $blog->featured_image_url }}" 
-                         class="img-fluid mb-4 scroll-animate slide-up stagger-1" 
+                         class="img-fluid mb-4 scroll-animate slide-up stagger-1 blog-featured-image" 
                          alt="{{ $blog->title }}" 
                          loading="lazy"
-                         style="border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
                          onerror="this.onerror=null; this.src='{{ $placeholderImageUrl }}';">
                 @endif
                 
@@ -265,7 +264,7 @@
                     @if($recentBlogs->count() > 0)
                     <div class="list-group list-group-flush">
                         @foreach($recentBlogs as $index => $recentBlog)
-                        <a href="{{ url('/blogs/' . rawurlencode($recentBlog->slug ?? $recentBlog->id)) }}" 
+                        <a href="{{ route('blogs.show', ['slug' => $recentBlog->slug]) }}" 
                            class="list-group-item list-group-item-action scroll-animate fade-in stagger-{{ min($index + 1, 6) }}"
                            style="text-decoration: none; transition: all 0.3s ease; position: relative; z-index: 10; pointer-events: auto; cursor: pointer; border: none; border-bottom: 1px solid #dee2e6;">
                             <h6 class="mb-1">{{ $recentBlog->title }}</h6>

@@ -1,0 +1,41 @@
+.campaign-studio-preview .campaign-preview-frame {
+    width: 100%;
+    min-height: 640px;
+    height: 70vh;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+    display: block;
+    margin: 0 auto;
+    transition: max-width 0.2s ease;
+}
+
+.campaign-studio-preview .campaign-preview-frame.is-mobile {
+    max-width: 390px;
+    min-height: 680px;
+    height: 75vh;
+}
+
+.campaign-studio-preview .card-header .btn.active {
+    background: #2c3e50;
+    border-color: #2c3e50;
+    color: #fff;
+}
+
+.campaign-studio-aside {
+    position: sticky;
+    top: 1rem;
+}
+
+.campaign-studio-meta dt {
+    color: #6c757d;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.campaign-studio-meta dd {
+    margin-bottom: 0.85rem;
+    word-break: break-word;
+}

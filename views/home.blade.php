@@ -1,266 +1,211 @@
 @extends('layouts.app')
 
-@php use Illuminate\Support\Str; @endphp
-
 @section('title', 'Home - CloudLab Latam')
 
 @section('content')
-@php
-    $hexagonPattern = asset('images/hexagon-pattern.svg');
-@endphp
-<div class="hero-section hero-section-with-pattern hero-section-futuristic" 
-     style="background-image: url('{{ $hexagonPattern }}'), radial-gradient(circle at top left, rgba(59, 130, 246, 0.25), transparent 55%), radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.2), transparent 50%), linear-gradient(135deg, #0f172a 0%, #1e3a8a 45%, #1f4ed8 100%);">
-    <!-- Animated Particles Background -->
-    <canvas id="particles-canvas" class="particles-canvas"></canvas>
-    
-    <!-- Animated Gradient Orbs -->
-    <div class="gradient-orb orb-1"></div>
-    <div class="gradient-orb orb-2"></div>
-    <div class="gradient-orb orb-3"></div>
-    
-    <div class="container text-center hero-content">
-        <div class="hero-badge scroll-animate fade-in">
-            <span class="badge-text">✨ {{ __('messages.home.innovative_tech') }}</span>
+            @if(isset($homeRenderError) && $homeRenderError)
+                <!-- HOME_RENDER_ERROR: {{ $homeRenderError }} -->
+            @endif
+<div class="cl-page">
+    <section class="cl-hero-wrap">
+        <div class="cl-hero-bg" aria-hidden="true"></div>
+        <div class="container">
+            <div class="cl-hero-grid">
+                <div class="cl-hero-copy">
+                    <h1>{{ __('messages.home.welcome') }}</h1>
+                    <p class="cl-hero-lead">{{ __('messages.home.subtitle') }}</p>
+                    <div class="cl-hero-actions">
+                        <a href="{{ route('services.index') }}" class="cl-btn-solid" style="background:#05070a!important;background-image:none!important;color:#fff!important;">{{ __('messages.home.know_services') }}</a>
+                        <a href="{{ route('contact.index') }}" class="cl-btn-outline cl-btn-outline--on-dark">{{ __('messages.home.contact_cta') }}</a>
+                    </div>
+                </div>
+
+                <aside class="cl-engage-card" aria-label="{{ __('messages.home.engage_title') }}">
+                    <p class="cl-engage-card__title">{{ __('messages.home.engage_title') }}</p>
+                    <ul class="cl-engage-card__list">
+                        <li>
+                            <span class="cl-engage-card__check" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
+                            <span>{{ __('messages.home.engage_item_1') }}</span>
+                        </li>
+                        <li>
+                            <span class="cl-engage-card__check" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
+                            <span>{{ __('messages.home.engage_item_2') }}</span>
+                        </li>
+                        <li>
+                            <span class="cl-engage-card__check" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
+                            <span>{{ __('messages.home.engage_item_3') }}</span>
+                        </li>
+                        <li>
+                            <span class="cl-engage-card__check" aria-hidden="true"><i class="bi bi-check-lg"></i></span>
+                            <span>{{ __('messages.home.engage_item_4') }}</span>
+                        </li>
+                    </ul>
+                    <p class="cl-engage-card__note">{{ __('messages.home.engage_note') }}</p>
+                </aside>
+            </div>
         </div>
-        <h1 class="display-4 mb-4 hero-title scroll-animate slide-up stagger-1">
-            <span class="gradient-text">{{ __('messages.home.welcome') }}</span>
-        </h1>
-        <p class="lead hero-subtitle scroll-animate slide-up stagger-2">{{ __('messages.home.subtitle') }}</p>
-        <div class="hero-cta-buttons scroll-animate fade-in stagger-3">
-            <a href="{{ route('contact.index') }}" class="btn-hero btn-hero-primary">
-                <span>{{ __('messages.cta.free_consultation') }}</span>
-                <i class="bi bi-arrow-right"></i>
-            </a>
-            <a href="{{ route('projects.index') }}" class="btn-hero btn-hero-secondary">
-                <span>{{ __('messages.home.view_projects') }}</span>
-            </a>
+    </section>
+
+    <div class="cl-home-intro">
+        <div class="cl-spiral-bg" aria-hidden="true">
+            <div class="cl-spiral-layer cl-spiral-layer--a"></div>
+            <div class="cl-spiral-layer cl-spiral-layer--b"></div>
+            <div class="cl-spiral-glow cl-spiral-glow--cyan"></div>
+            <div class="cl-spiral-glow cl-spiral-glow--magenta"></div>
         </div>
+
+        <section class="cl-services">
+            <div class="container">
+                <h2 class="cl-section-title cl-services-heading">{{ __('messages.home.services_title') }}</h2>
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <article class="cl-svc-card cl-glow-card h-100">
+                            <div class="cl-svc-icon cl-svc-icon--blue"><i class="bi bi-bar-chart-fill"></i></div>
+                            <h3>{{ __('messages.home.analytics_ai_title') }}</h3>
+                            <p>{{ __('messages.home.analytics_ai_desc') }}</p>
+                            <p class="cl-svc-tagline">{{ __('messages.home.analytics_ai_tagline') }}</p>
+                            <a href="{{ route('services.show', ['slug' => 'power-bi-analitica']) }}" class="cl-link-read">{{ __('messages.home.service_link') }} <i class="bi bi-arrow-right"></i></a>
+                        </article>
+                    </div>
+                    <div class="col-lg-6">
+                        <article class="cl-svc-card cl-glow-card h-100">
+                            <div class="cl-svc-icon cl-svc-icon--purple"><i class="bi bi-grid-1x2-fill"></i></div>
+                            <h3>{{ __('messages.home.data_integration_title') }}</h3>
+                            <p>{{ __('messages.home.data_integration_desc') }}</p>
+                            <a href="{{ route('services.show', ['slug' => 'microsoft-fabric-ingenieria-de-datos']) }}" class="cl-link-read">{{ __('messages.home.service_link') }} <i class="bi bi-arrow-right"></i></a>
+                        </article>
+                    </div>
+                    <div class="col-lg-6">
+                        <article class="cl-svc-card cl-glow-card h-100">
+                            <div class="cl-svc-icon cl-svc-icon--orange"><i class="bi bi-lightning-charge-fill"></i></div>
+                            <h3>{{ __('messages.home.power_automate_title') }}</h3>
+                            <p>{{ __('messages.home.power_automate_desc') }}</p>
+                            <a href="{{ route('services.show', ['slug' => 'automatizacion-power-automate']) }}" class="cl-link-read">{{ __('messages.home.service_link') }} <i class="bi bi-arrow-right"></i></a>
+                        </article>
+                    </div>
+                    <div class="col-lg-6">
+                        <article class="cl-svc-card cl-glow-card h-100">
+                            <div class="cl-svc-icon cl-svc-icon--orange"><i class="bi bi-gear-fill"></i></div>
+                            <h3>{{ __('messages.home.rpa_title') }}</h3>
+                            <p>{{ __('messages.home.rpa_desc') }}</p>
+                            <a href="{{ route('services.show', ['slug' => 'rpa']) }}" class="cl-link-read">{{ __('messages.home.service_link') }} <i class="bi bi-arrow-right"></i></a>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    
-    <!-- Scroll Indicator -->
-    <div class="scroll-indicator scroll-animate fade-in stagger-4">
-        <div class="mouse">
-            <div class="wheel"></div>
+
+    <section class="cl-section cl-section--white">
+        <div class="container">
+            <h2 class="cl-section-title">{{ __('messages.home.why_choose') }}</h2>
+            <p class="cl-section-subtitle">{{ __('messages.home.why_choose_desc') }}</p>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="cl-card cl-glow-card">
+                        <h3 class="h5">{{ __('messages.home.fast_reliable') }}</h3>
+                        <p>{{ __('messages.home.fast_reliable_desc') }}</p>
+                        <a href="{{ route('about.index') }}" class="cl-learn-more">{{ __('messages.home.learn_more') }} <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="cl-card cl-glow-card">
+                        <h3 class="h5">{{ __('messages.home.secure') }}</h3>
+                        <p>{{ __('messages.home.secure_desc') }}</p>
+                        <a href="{{ route('about.index') }}" class="cl-learn-more">{{ __('messages.home.learn_more') }} <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="cl-card cl-glow-card">
+                        <h3 class="h5">{{ __('messages.home.expert_support') }}</h3>
+                        <p>{{ __('messages.home.expert_support_desc') }}</p>
+                        <a href="{{ route('contact.index') }}" class="cl-learn-more">{{ __('messages.home.learn_more') }} <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="arrow">
-            <span></span>
-            <span></span>
-            <span></span>
+    </section>
+
+    <section class="cl-section">
+        <div class="container">
+            <h2 class="cl-section-title">{{ __('messages.home.technologies_title') }}</h2>
+            <p class="cl-section-subtitle">{{ __('messages.home.technologies_subtitle') }}</p>
+            @if(isset($technologies) && $technologies->isNotEmpty())
+                <div class="cl-tech-grid mb-4">
+                    @foreach($technologies as $technology)
+                        <div class="cl-tech-item">
+                            @include('components.technology-icon', ['technology' => $technology, 'size' => 44])
+                            <h4>{{ $technology->name }}</h4>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="text-center">
+                    <a href="{{ route('public.technologies.index') }}" class="cl-section-link">{{ __('messages.home.view_technologies') }} →</a>
+                </div>
+            @else
+                <div class="cl-empty">{{ __('messages.home.no_technologies') }}</div>
+            @endif
         </div>
-    </div>
+    </section>
+
+    <section class="cl-section cl-section--white">
+        <div class="container">
+            <div class="cl-section-header">
+                <div>
+                    <h2 class="cl-section-title mb-1">{{ __('messages.home.latest_blog') }}</h2>
+                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.latest_blog_subtitle') }}</p>
+                </div>
+                <a href="{{ route('blogs.index') }}" class="cl-section-link">{{ __('messages.home.view_all_posts') }} →</a>
+            </div>
+            @if(isset($recentBlogs) && $recentBlogs->count() > 0)
+                <div class="row g-4">
+                    @foreach($recentBlogs as $blog)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="cl-card cl-glow-card">
+                                <span class="cl-badge">{{ __('messages.home.badge_blog') }}</span>
+                                <h5>{{ $blog->title }}</h5>
+                                <p>{{ \Illuminate\Support\Str::limit($blog->excerpt ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-link-read">
+                                    {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="cl-empty">{{ __('messages.home.no_blog') }}</div>
+            @endif
+        </div>
+    </section>
+
+    <section class="cl-section pb-5">
+        <div class="container">
+            <div class="cl-section-header">
+                <div>
+                    <h2 class="cl-section-title mb-1">{{ __('messages.home.featured_projects') }}</h2>
+                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.featured_projects_subtitle') }}</p>
+                </div>
+                <a href="{{ route('projects.index') }}" class="cl-section-link">{{ __('messages.home.view_all') }} →</a>
+            </div>
+            @if(isset($featuredProjects) && $featuredProjects->count() > 0)
+                <div class="row g-4">
+                    @foreach($featuredProjects as $project)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="cl-card cl-glow-card">
+                                <span class="cl-badge">{{ __('messages.home.badge_project') }}</span>
+                                <h5>{{ $project->translated('title') }}</h5>
+                                <p>{{ \Illuminate\Support\Str::limit($project->translated('description') ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-link-read">
+                                    {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="cl-empty">{{ __('messages.home.no_projects') }}</div>
+            @endif
+        </div>
+    </section>
 </div>
-
-<!-- Why Choose CloudLab Latam Section -->
-<section class="why-choose-section scroll-animate fade-in">
-    <div class="container">
-        <h2 class="why-choose-title scroll-animate slide-up">{{ __('messages.home.why_choose') }}</h2>
-        <div class="why-choose-content-wrapper scroll-animate fade-in stagger-1">
-            <div class="why-choose-description">{{ __('messages.home.why_choose_desc') }}</div>
-            @php
-                $locale = app()->getLocale();
-                $imagePath = $locale == 'es' 
-                    ? 'images/digital-transformation-es.png' 
-                    : 'images/digital-transformation-en.png';
-                $imageUrl = asset($imagePath);
-            @endphp
-            <div class="why-choose-image">
-                <img src="{{ $imageUrl }}" 
-                     alt="{{ $locale == 'es' ? 'Transformación Digital para Empresas' : 'Digital Transformation for Business' }}" 
-                     class="why-choose-img"
-                     loading="lazy"
-                     onerror="console.error('Error loading image:', this.src); this.style.border='2px solid red';">
-            </div>
-        </div>
-        <div class="row">
-            <!-- Card 1: Rápido y Confiable -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card feature-card-modern scroll-animate slide-up stagger-1">
-                    <div class="feature-card-glow"></div>
-                    <div class="feature-card-header">
-                        <div class="feature-icon feature-icon-svg-container feature-icon-animated">
-                            <img src="{{ asset('images/schedule-icon.svg') }}" alt="Schedule" class="feature-icon-svg">
-                            <div class="icon-pulse"></div>
-                        </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3 class="feature-card-title">{{ __('messages.home.fast_reliable') }}</h3>
-                        <p class="feature-card-description">
-                            {{ __('messages.home.fast_reliable_desc') }}
-                        </p>
-                        <div class="feature-card-footer">
-                            <span class="feature-link">Learn more <i class="bi bi-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2: Seguro -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card feature-card-modern scroll-animate slide-up stagger-2">
-                    <div class="feature-card-glow"></div>
-                    <div class="feature-card-header">
-                        <div class="feature-icon feature-icon-svg-container feature-icon-animated">
-                            <img src="{{ asset('images/secure-server-icon.svg') }}" alt="Secure Server" class="feature-icon-svg" loading="lazy">
-                            <div class="icon-pulse"></div>
-                        </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3 class="feature-card-title">{{ __('messages.home.secure') }}</h3>
-                        <p class="feature-card-description">
-                            {{ __('messages.home.secure_desc') }}
-                        </p>
-                        <div class="feature-card-footer">
-                            <span class="feature-link">Learn more <i class="bi bi-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3: Soporte Experto -->
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="feature-card feature-card-modern scroll-animate slide-up stagger-3">
-                    <div class="feature-card-glow"></div>
-                    <div class="feature-card-header">
-                        <div class="feature-icon feature-icon-svg-container feature-icon-animated">
-                            <img src="{{ asset('images/instant-support-icon.svg') }}" alt="Instant Support" class="feature-icon-svg" loading="lazy">
-                            <div class="icon-pulse"></div>
-                        </div>
-                    </div>
-                    <div class="feature-card-body">
-                        <h3 class="feature-card-title">{{ __('messages.home.expert_support') }}</h3>
-                        <p class="feature-card-description">
-                            {{ __('messages.home.expert_support_desc') }}
-                        </p>
-                        <div class="feature-card-footer">
-                            <span class="feature-link">Learn more <i class="bi bi-arrow-right"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Technologies Section -->
-<section class="technologies-section scroll-animate fade-in">
-    <div class="container">
-        <div class="technologies-header scroll-animate slide-up">
-            <h2 class="technologies-title">{{ __('messages.home.technologies_title') }}</h2>
-            <p class="technologies-subtitle">{{ __('messages.home.technologies_subtitle') }}</p>
-        </div>
-        @if($technologies->isNotEmpty())
-            <div class="technologies-grid">
-                @foreach($technologies as $index => $technology)
-                    <div class="tech-card scroll-animate scale-in stagger-{{ min($index + 1, 6) }}">
-                        <div class="tech-icon {{ $technology->color_class }}">
-                            @if($technology->icon_url)
-                                <img src="{{ $technology->icon_url }}" alt="{{ $technology->name }} icon" class="tech-icon-image" loading="lazy">
-                            @else
-                                <span class="text-white-50">{{ Str::substr($technology->name, 0, 2) }}</span>
-                            @endif
-                        </div>
-                        <h4 class="tech-name">{{ $technology->name }}</h4>
-                        @if($technology->description)
-                            <p class="tech-description">{{ $technology->description }}</p>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
-            <div class="text-center mt-4">
-                <a href="{{ route('technologies.index') }}" class="technologies-link">{{ __('messages.home.view_technologies') }} →</a>
-            </div>
-        @else
-            <div class="alert alert-info mt-4" role="alert">
-                {{ __('messages.home.no_technologies') }}
-            </div>
-        @endif
-    </div>
-</section>
-
-<!-- Proyectos Destacados Section -->
-<section class="content-section home-projects-section scroll-animate fade-in">
-    <div class="container">
-        <div class="section-header scroll-animate slide-up">
-            <h2 class="section-title">{{ __('messages.home.featured_projects') }}</h2>
-            <a href="{{ route('projects.index') }}" class="section-link">{{ __('messages.home.view_all') }} →</a>
-        </div>
-        
-        @if($featuredProjects->count() > 0)
-        <div class="row">
-            @foreach($featuredProjects as $index => $project)
-            <div class="col-md-4 mb-4">
-                <div class="card card-modern h-100 scroll-animate slide-up stagger-{{ min($index + 1, 6) }}">
-                    <div class="card-image-wrapper">
-                        @if($project->image)
-                        <img src="{{ asset('storage/' . $project->image) }}" class="card-img-top" alt="{{ $project->title }}" loading="lazy">
-                        @endif
-                        <div class="card-overlay"></div>
-                        <div class="card-badge">
-                            <i class="bi bi-star-fill"></i> Featured
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $project->title }}</h5>
-                        <p class="card-text">{{ Str::limit($project->description, 100) }}</p>
-                        <a href="{{ route('projects.show', $project->slug) }}" class="btn btn-primary btn-modern">
-                            <span>{{ __('messages.projects.view_details') }}</span>
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @else
-        <div class="empty-state">
-            {{ __('messages.home.no_projects') }}
-        </div>
-        @endif
-    </div>
-</section>
-
-<!-- Últimas Entradas del Blog Section -->
-<section class="content-section home-blog-section scroll-animate fade-in">
-    <div class="container">
-        <div class="section-header scroll-animate slide-up">
-            <h2 class="section-title">{{ __('messages.home.latest_blog') }}</h2>
-            <a href="{{ route('blogs.index') }}" class="section-link">{{ __('messages.home.view_all') }} →</a>
-        </div>
-        
-        @if($recentBlogs->count() > 0)
-        <div class="row">
-            @foreach($recentBlogs as $index => $blog)
-            <div class="col-md-4 mb-4">
-                <div class="card card-modern h-100 scroll-animate slide-up stagger-{{ min($index + 1, 6) }}">
-                    <div class="card-image-wrapper">
-                        @if($blog->featured_image_url)
-                        <img src="{{ $blog->featured_image_url }}" class="card-img-top" alt="{{ $blog->title }}" loading="lazy">
-                        @endif
-                        <div class="card-overlay"></div>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="card-date">{{ $blog->created_at->format('M d, Y') }}</span>
-                        </div>
-                        <h5 class="card-title">{{ $blog->title }}</h5>
-                        <p class="card-text">{{ Str::limit($blog->excerpt, 100) }}</p>
-                        <a href="{{ url('/blogs/' . rawurlencode($blog->slug ?? $blog->id)) }}" 
-                           class="btn btn-primary btn-modern" 
-                           style="position: relative; z-index: 15 !important; pointer-events: auto !important; cursor: pointer !important;">
-                            <span>{{ __('messages.blog.read_more') }}</span>
-                            <i class="bi bi-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        @else
-        <div class="empty-state">
-            {{ __('messages.home.no_blog') }}
-        </div>
-        @endif
-    </div>
-</section>
 @endsection
-

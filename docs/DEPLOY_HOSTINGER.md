@@ -136,6 +136,17 @@ Si el enlace simbólico no está permitido, copia el contenido de `storage/app/p
 
 ## Paso 6 — Base de datos y cachés
 
+### Opción A — Importar SQL en phpMyAdmin (estructura vacía)
+
+1. hPanel → **Bases de datos** → crear base MySQL y usuario
+2. Abrir **phpMyAdmin** → seleccionar tu base de datos
+3. Pestaña **Importar** → archivo **`database/sql/hostinger_schema.sql`**
+4. Esto crea todas las tablas + registro en `migrations` (no hace falta `php artisan migrate` para la estructura)
+5. Crear usuario admin (SSH): `php artisan db:seed --class=AdminUserSeeder`  
+   O importar un dump de datos desde tu XAMPP local si ya tienes contenido
+
+### Opción B — Migraciones Laravel (SSH)
+
 Con SSH en la raíz del proyecto:
 
 ```bash
@@ -149,6 +160,77 @@ php artisan migrate --force
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+```
+
+---
+
+## Logo not visible on Hostinger
+
+### Step 1 — Confirm the image file exists
+
+Upload **`logo-cl.png`** to:
+
+```text
+laravel_aoo/public/images/logo-cl.png
+```
+
+Also upload **`logo.png`** as fallback in the same folder.
+
+### Step 2 — Test the URL in your browser
+
+Open:
+
+```text
+https://TU-DOMINIO.com/images/logo-cl.png
+```
+
+| Result | Action |
+|--------|--------|
+| **Image shows** | File is OK. Upload updated code (see Step 4) and clear cache. |
+| **404 Not Found** | File missing or document root is wrong (see Step 3). |
+
+### Step 3 — Document root must be `public`
+
+hPanel → domain → **Document root** must end with **`/public`**, e.g.:
+
+```text
+.../laravel_aoo/public
+```
+
+Not `.../laravel_aoo` alone.
+
+If you cannot change document root, add to `.env`:
+
+```env
+ASSET_PREFIX=laravel_aoo/public
+```
+
+(or whatever path appears before `/images/` in your site URL)
+
+### Step 4 — Upload these files to Hostinger
+
+| File |
+|------|
+| `app/Support/Branding.php` |
+| `resources/views/components/navigation.blade.php` |
+| `views/components/navigation.blade.php` |
+| `views/layouts/app.blade.php` |
+| `public/images/logo-cl.png` |
+| `public/css/cloudlab.css` |
+
+Then run (SSH):
+
+```bash
+php artisan view:clear
+php artisan config:clear
+```
+
+### Step 5 — Optional `.env` override
+
+If `/images/logo-cl.png` works in the browser but not in the page:
+
+```env
+LOGO_URL=https://TU-DOMINIO.com/images/logo-cl.png
 ```
 
 ---
@@ -186,6 +268,46 @@ php artisan view:cache
 ```
 
 Si hay migraciones nuevas: `php artisan migrate --force`
+
+---
+
+## Error 500 after uploading files
+
+### Fix 1 — Clear cached config (try first)
+
+Delete all `.php` files in `laravel_aoo/bootstrap/cache/` via File Manager.
+
+### Fix 2 — APP_KEY
+
+```bash
+php artisan key:generate --force
+php artisan config:clear
+```
+
+### Fix 3 — See real error (temporary)
+
+```env
+APP_DEBUG=true
+```
+
+Set back to `false` after fixing.
+
+### Fix 4 — Disable CSP temporarily
+
+```env
+CSP_ENABLED=false
+```
+
+### Fix 5 — Diagnostic script
+
+Upload `deploy/hostinger-check.php` → `public/hostinger-check.php`, set `CHECK_TOKEN`, visit with `?token=...`, then delete the file.
+
+### Fix 6 — Re-upload these files (logo fix, no Branding class needed)
+
+- `config/app.php`
+- `resources/views/components/navigation.blade.php`
+- `views/components/navigation.blade.php`
+- `views/layouts/app.blade.php`
 
 ---
 

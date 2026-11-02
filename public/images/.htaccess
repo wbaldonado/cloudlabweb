@@ -1,0 +1,7 @@
+<IfModule mod_mime.c>
+    AddType image/svg+xml .svg .svgz
+    AddType image/png .png
+    AddType image/jpeg .jpg .jpeg
+    AddType image/webp .webp
+    AddType image/gif .gif
+</IfModule>

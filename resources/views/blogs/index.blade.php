@@ -16,8 +16,10 @@
                     @if($blog->featured_image_url)
                         <img src="{{ $blog->featured_image_url }}" 
                              class="card-img-top" 
-                             alt="{{ $blog->title }}" 
-                             style="height: 200px; object-fit: cover;" 
+                             alt="{{ $blog->title }}"
+                             width="400"
+                             height="200"
+                             style="height: 200px; object-fit: cover;"
                              loading="lazy"
                              onerror="this.onerror=null; this.src='{{ $placeholderImg }}';">
                     @else

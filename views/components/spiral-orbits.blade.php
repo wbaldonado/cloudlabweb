@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none" class="cl-orbit-svg" aria-hidden="true">
+    <defs>
+        <linearGradient id="clCyan" x1="40" y1="40" x2="280" y2="200" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#00E5FF"/>
+            <stop offset="1" stop-color="#7EF9FF"/>
+        </linearGradient>
+        <linearGradient id="clMagenta" x1="360" y1="360" x2="120" y2="200" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#E040FB"/>
+            <stop offset="1" stop-color="#9D00FF"/>
+        </linearGradient>
+        <filter id="clGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.8" result="b"/>
+            <feMerge>
+                <feMergeNode in="b"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </defs>
+
+    <g class="cl-orbit-group cl-orbit-group--cyan" filter="url(#clGlow)" stroke="url(#clCyan)" stroke-linecap="round" fill="none">
+        <path class="cl-orbit-path" pathLength="100" d="M70 250 C85 95 195 45 310 95"/>
+        <path class="cl-orbit-path" pathLength="100" d="M58 268 C78 108 205 52 328 108"/>
+        <path class="cl-orbit-path" pathLength="100" d="M48 286 C72 122 215 58 344 120"/>
+        <path class="cl-orbit-path" pathLength="100" d="M40 304 C66 136 225 64 358 132"/>
+        <path class="cl-orbit-path" pathLength="100" d="M34 320 C62 150 232 72 368 142"/>
+    </g>
+    <g class="cl-orbit-nodes cl-orbit-nodes--cyan" fill="#00E5FF">
+        <circle class="cl-orbit-node" cx="310" cy="95" r="4.5"/>
+        <circle class="cl-orbit-node" cx="328" cy="108" r="3.8"/>
+        <circle class="cl-orbit-node" cx="344" cy="120" r="3.2"/>
+        <circle class="cl-orbit-node" cx="358" cy="132" r="2.8"/>
+        <circle class="cl-orbit-node" cx="368" cy="142" r="2.4"/>
+    </g>
+
+    <g class="cl-orbit-group cl-orbit-group--magenta" filter="url(#clGlow)" stroke="url(#clMagenta)" stroke-linecap="round" fill="none">
+        <path class="cl-orbit-path" pathLength="100" d="M330 150 C315 305 205 355 90 305"/>
+        <path class="cl-orbit-path" pathLength="100" d="M342 132 C322 292 195 348 72 292"/>
+        <path class="cl-orbit-path" pathLength="100" d="M352 114 C328 278 185 342 56 280"/>
+        <path class="cl-orbit-path" pathLength="100" d="M360 96 C334 264 175 336 42 268"/>
+        <path class="cl-orbit-path" pathLength="100" d="M366 80 C338 250 168 328 32 258"/>
+    </g>
+    <g class="cl-orbit-nodes cl-orbit-nodes--magenta" fill="#E040FB">
+        <circle class="cl-orbit-node" cx="90" cy="305" r="4.5"/>
+        <circle class="cl-orbit-node" cx="72" cy="292" r="3.8"/>
+        <circle class="cl-orbit-node" cx="56" cy="280" r="3.2"/>
+        <circle class="cl-orbit-node" cx="42" cy="268" r="2.8"/>
+        <circle class="cl-orbit-node" cx="32" cy="258" r="2.4"/>
+    </g>
+</svg>

@@ -11,13 +11,18 @@ class RobotsController extends Controller
      */
     public function index(): Response
     {
-        $baseUrl = config('app.url');
-        
+        $baseUrl = rtrim((string) config('app.url'), '/');
+
         $robots = "User-agent: *\n";
         $robots .= "Allow: /\n\n";
+        $robots .= "# Admin and private areas\n";
+        $robots .= "Disallow: /admin\n";
+        $robots .= "Disallow: /admin/\n";
+        $robots .= "Disallow: /language\n";
+        $robots .= "Disallow: /login\n\n";
         $robots .= "# Sitemap\n";
         $robots .= "Sitemap: {$baseUrl}/sitemap.xml\n";
-        
+
         return response($robots, 200)
             ->header('Content-Type', 'text/plain; charset=utf-8');
     }

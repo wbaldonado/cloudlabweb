@@ -56,7 +56,25 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Flask CRM URL
+    |--------------------------------------------------------------------------
+    |
+    | When set, the admin sidebar "CRM Dashboard" opens the Python Flask CRM
+    | (same MySQL database). Leave empty to use the built-in Laravel CRM.
+    |
+    */
+
+    'crm_flask_url' => env('CRM_FLASK_URL'),
+
     'asset_url' => env('ASSET_URL'),
+
+    'asset_prefix' => env('ASSET_PREFIX', ''),
+
+    'logo_url' => env('LOGO_URL'),
+
+    'logo_fallback_url' => env('LOGO_FALLBACK_URL'),
 
     /*
     |--------------------------------------------------------------------------

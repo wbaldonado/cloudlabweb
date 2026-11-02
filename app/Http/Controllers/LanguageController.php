@@ -2,26 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
+use App\Support\LocalizedUrl;
 
 class LanguageController extends Controller
 {
-    public function switchLanguage($locale)
+    /**
+     * Legacy session switcher. Sends the visitor to the same path with a locale prefix.
+     */
+    public function switchLanguage(string $locale)
     {
-        if (in_array($locale, ['en', 'es'])) {
-            Session::put('locale', $locale);
-            Session::save();
-            App::setLocale($locale);
+        if (! LocalizedUrl::isLocale($locale)) {
+            $locale = config('seo.default_locale', 'es');
         }
 
-        // Redirect back to the previous page, or home if no referrer
-        $previousUrl = url()->previous();
-        if ($previousUrl && $previousUrl !== url()->current() && strpos($previousUrl, url('/')) === 0) {
-            return redirect($previousUrl);
-        }
-        
-        return redirect()->route('home');
+        return redirect()->to(LocalizedUrl::swap($locale, url()->previous()));
     }
 }

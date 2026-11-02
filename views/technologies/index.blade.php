@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@php use Illuminate\Support\Str; @endphp
-
 @section('title', 'Technologies - CloudLab Latam')
 
 @section('content')
@@ -16,11 +14,7 @@
                 @foreach($technologies as $index => $technology)
                     <div class="tech-card scroll-animate scale-in stagger-{{ min(($index % 6) + 1, 6) }}">
                         <div class="tech-icon {{ $technology->color_class }}">
-                            @if($technology->icon_url)
-                                <img src="{{ $technology->icon_url }}" alt="{{ $technology->name }} icon" class="tech-icon-image" loading="lazy">
-                            @else
-                                <span class="text-white-50">{{ Str::substr($technology->name, 0, 2) }}</span>
-                            @endif
+                            @include('components.technology-icon', ['technology' => $technology, 'size' => 48])
                         </div>
                         <h4 class="tech-name">{{ $technology->name }}</h4>
                         @if($technology->description)
@@ -37,4 +31,3 @@
     </div>
 </section>
 @endsection
-

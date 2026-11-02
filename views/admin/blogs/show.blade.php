@@ -30,8 +30,8 @@
         @endif
         
         <p><strong>Content:</strong></p>
-        <div class="border p-3 mb-3">
-            {!! nl2br(e($blog->content)) !!}
+        <div class="border p-3 mb-3 blog-content">
+            {!! $blog->content !!}
         </div>
         
         <p><strong>Author:</strong> {{ $blog->user->name ?? 'N/A' }}</p>

@@ -6,15 +6,23 @@ use App\Models\Blog;
 use App\Models\BlogRating;
 use App\Models\BlogComment;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::where('is_published', true)
-            ->latest()
-            ->paginate(9);
+        try {
+            $blogs = Blog::where('is_published', true)
+                ->latest()
+                ->paginate(9);
+        } catch (\Throwable $e) {
+            Log::warning('Blog index query failed', ['error' => $e->getMessage()]);
+            $blogs = new LengthAwarePaginator([], 0, 9, 1, [
+                'path' => request()->url(),
+            ]);
+        }
 
         return view('blogs.index', compact('blogs'))
             ->with('pageType', 'blog_list');
@@ -25,6 +33,7 @@ class BlogController extends Controller
      */
     public function showById($id)
     {
+        $id = request()->route('id', $id);
         $blog = Blog::where('id', (int) $id)->where('is_published', true)->first();
         if (!$blog) {
             abort(404, 'Blog post not found');
@@ -34,6 +43,7 @@ class BlogController extends Controller
 
     public function show($slug)
     {
+        $slug = request()->route('slug', $slug);
         try {
             $rawSlug = is_string($slug) ? trim($slug) : '';
             if ($rawSlug === '') {
@@ -135,6 +145,7 @@ class BlogController extends Controller
 
     public function rate(Request $request, $slug)
     {
+        $slug = request()->route('slug', $slug);
         $blog = Blog::where('slug', $slug)
             ->where('is_published', true)
             ->firstOrFail();
@@ -175,6 +186,7 @@ class BlogController extends Controller
 
     public function comment(Request $request, $slug)
     {
+        $slug = request()->route('slug', $slug);
         if ($request->filled('website')) {
             return redirect()->back();
         }

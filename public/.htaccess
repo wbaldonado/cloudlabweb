@@ -23,6 +23,12 @@
 # Prevent directory listing
 Options -Indexes
 
+# Ensure SVG is served with correct MIME type (needed with nosniff)
+<IfModule mod_mime.c>
+    AddType image/svg+xml .svg .svgz
+    AddEncoding gzip .svgz
+</IfModule>
+
 # Security Headers
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Cloud Bot">
+  <defs>
+    <linearGradient id="cbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a1220"/>
+      <stop offset="100%" stop-color="#05070a"/>
+    </linearGradient>
+    <linearGradient id="cbRing" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00e5ff"/>
+      <stop offset="100%" stop-color="#e040fb"/>
+    </linearGradient>
+  </defs>
+  <circle cx="64" cy="64" r="62" fill="url(#cbBg)"/>
+  <circle cx="64" cy="64" r="58" fill="none" stroke="url(#cbRing)" stroke-width="4"/>
+  <rect x="36" y="40" width="56" height="44" rx="14" fill="#121c2e" stroke="#00e5ff" stroke-width="2"/>
+  <circle cx="52" cy="60" r="6" fill="#00e5ff"/>
+  <circle cx="76" cy="60" r="6" fill="#00e5ff"/>
+  <path d="M50 74c4 5 10 8 14 8s10-3 14-8" fill="none" stroke="#7ef9ff" stroke-width="3" stroke-linecap="round"/>
+  <rect x="58" y="28" width="12" height="12" rx="3" fill="#e040fb"/>
+  <circle cx="64" cy="26" r="4" fill="#00e5ff"/>
+</svg>

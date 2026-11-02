@@ -12,7 +12,7 @@ class ContentSecurityPolicy
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! config('csp.enabled', true)) {
+        if (! config('csp.enabled', true) || ! is_array(config('csp.directives'))) {
             return $next($request);
         }
 

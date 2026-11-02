@@ -44,11 +44,22 @@ return [
             'https:',
             'blob:',
         ],
+        'media-src' => [
+            "'self'",
+            'blob:',
+            'https:',
+        ],
         'connect-src' => [
             "'self'",
         ],
         'frame-src' => [
+            "'self'",
+            'blob:',
+            'data:',
             'https://wa.me',
+            'https://www.youtube.com',
+            'https://www.youtube-nocookie.com',
+            'https://player.vimeo.com',
         ],
         'worker-src' => ["'self'", 'blob:'],
         'manifest-src' => ["'self'"],

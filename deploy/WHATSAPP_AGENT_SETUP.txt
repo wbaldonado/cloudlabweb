@@ -1,0 +1,93 @@
+# WhatsApp Lead Agent — Hostinger setup (Meta Cloud API)
+=========================================================
+
+Automates the floating WhatsApp button: collects company name, email,
+and request; saves to CRM; replies that a team member will contact them.
+
+## Prerequisites (Meta)
+
+1. Meta Business account + Meta Developer App
+2. Add product: WhatsApp → Cloud API
+3. Get:
+   - Temporary or permanent Access Token → WHATSAPP_TOKEN
+   - Phone number ID → WHATSAPP_PHONE_NUMBER_ID
+4. The WhatsApp number must be a Business API number (not a personal-only wa.me chat)
+
+## 1. Database
+
+Run in phpMyAdmin:
+  database/sql/whatsapp_conversation_states.sql
+
+Or SSH:
+  php artisan migrate --force
+
+## 2. .env (production)
+
+```env
+WHATSAPP_ENABLED=true
+WHATSAPP_TOKEN=your_meta_access_token
+WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+WHATSAPP_VERIFY_TOKEN=cloudlab-whatsapp-verify-change-me
+WHATSAPP_NUMBER=573208156396
+WHATSAPP_PREFILL_TEXT="Hola, quiero información"
+WHATSAPP_NOTIFY_EMAIL=info@cloudlablatam.com
+WHATSAPP_API_VERSION=v21.0
+```
+
+Then clear config cache:
+  php artisan config:clear
+  # or delete bootstrap/cache/config.php
+
+## 3. Webhook in Meta Developer Console
+
+Callback URL:
+  https://cloudlablatam.tech/webhooks/whatsapp
+
+Verify token:
+  same value as WHATSAPP_VERIFY_TOKEN
+
+Subscribe to webhook field:
+  messages
+
+## 4. Files to upload
+
+```
+config/whatsapp.php
+routes/web.php
+app/Http/Middleware/VerifyCsrfToken.php
+app/Http/Controllers/WhatsAppWebhookController.php
+app/Support/WhatsApp/WhatsAppClient.php
+app/Support/WhatsApp/LeadConversation.php
+app/Models/WhatsApp/ConversationState.php
+app/Mail/WhatsAppLeadNotification.php
+views/emails/whatsapp_lead_notification.blade.php
+views/layouts/app.blade.php
+database/migrations/2026_07_18_000001_create_whatsapp_conversation_states_table.php
+database/sql/whatsapp_conversation_states.sql
+```
+
+## 5. Conversation flow
+
+1. User taps floating Contáctanos → WhatsApp opens
+2. User sends any message (e.g. Hola)
+3. Bot asks for company name
+4. Bot asks for email
+5. Bot asks for request details
+6. Bot saves Company + Contact + Activity in CRM
+7. Bot replies: team member will contact soon
+8. Email notification to WHATSAPP_NOTIFY_EMAIL
+
+Restart / new lead: user writes "nueva" or "hola"
+
+## 6. Test
+
+1. Send a message from another phone to the Business number
+2. Check laravel.log if no reply
+3. Check CRM Dashboard for new company/contact/activity
+
+## Troubleshooting
+
+- Webhook verification 403 → WHATSAPP_VERIFY_TOKEN mismatch
+- No replies → WHATSAPP_ENABLED=false, bad token, or phone_number_id wrong
+- Table missing → run whatsapp_conversation_states.sql
+- CSRF 419 on POST → ensure VerifyCsrfToken except includes webhooks/whatsapp

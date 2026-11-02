@@ -1,0 +1,384 @@
+{% extends 'layout.html' %}
+{% block title %}CRM - Dashboard{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/crm-dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+{% set priority_deals = open_deals|sort(attribute='amount', reverse=True) %}
+{% set pipeline_deals = open_deals|sort(attribute='updated_at', reverse=True) %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">CRM</a>
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <a href="{{ laravel_admin_url }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-box-arrow-up-right"></i> Panel Laravel
+            </a>
+            <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid pb-4">
+<div class="crm-dashboard" id="crmDashboard"
+     data-contact-store="{{ url_for('api.store_contact') }}"
+     data-company-store="{{ url_for('api.store_company') }}"
+     data-deal-store="{{ url_for('api.store_deal') }}"
+     data-activity-store="{{ url_for('api.store_activity') }}"
+     data-import-store="{{ url_for('api.import_csv') }}">
+    <div class="crm-hero mb-4">
+        <span class="crm-pill">CloudLab Latam</span>
+        <h1 class="crm-hero-title">CRM comercial</h1>
+        <p class="crm-hero-sub">Hola, {{ user.name }}. Gestiona contactos, empresas, oportunidades y actividades desde un solo panel.</p>
+    </div>
+
+    <div id="crmFlash" class="alert alert-success d-none" role="alert"></div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="crm-stat-card">
+                <div class="crm-stat-icon"><i class="bi bi-people"></i></div>
+                <div>
+                    <div class="crm-stat-value" id="crmStatContacts">{{ stats['contacts'] }}</div>
+                    <div class="crm-stat-label">Contactos</div>
+                    <div class="crm-stat-meta">Base comercial</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="crm-stat-card">
+                <div class="crm-stat-icon"><i class="bi bi-building"></i></div>
+                <div>
+                    <div class="crm-stat-value" id="crmStatCompanies">{{ stats['companies'] }}</div>
+                    <div class="crm-stat-label">Empresas</div>
+                    <div class="crm-stat-meta">Cuentas activas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="crm-stat-card">
+                <div class="crm-stat-icon"><i class="bi bi-currency-dollar"></i></div>
+                <div>
+                    <div class="crm-stat-value" id="crmStatPayments">USD {{ "{:,.0f}".format(stats['total_payments']) }}</div>
+                    <div class="crm-stat-label">Pagos totales</div>
+                    <div class="crm-stat-meta">Oportunidades ganadas</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="crm-stat-card">
+                <div class="crm-stat-icon"><i class="bi bi-calendar-check"></i></div>
+                <div>
+                    <div class="crm-stat-value" id="crmStatPending">{{ stats['pending_activities'] }}</div>
+                    <div class="crm-stat-label">Pendientes</div>
+                    <div class="crm-stat-meta">Actividades abiertas</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="crm-panel mb-4">
+                <div class="crm-panel-head">
+                    <div>
+                        <h2>Contactos</h2>
+                        <p>Busca, filtra y administra contactos.</p>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#crmImportModal">
+                            <i class="bi bi-upload"></i> Importar CSV
+                        </button>
+                        <button type="button" class="btn btn-dark" data-crm-open="contact">
+                            <i class="bi bi-plus-lg"></i> Nuevo contacto
+                        </button>
+                    </div>
+                </div>
+
+                <form method="GET" action="{{ url_for('dashboard.index') }}" class="crm-filters mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" name="q" value="{{ search }}" class="form-control" placeholder="Buscar por nombre, email, empresa o cargo">
+                    </div>
+                    <select name="stage" class="form-select" onchange="this.form.submit()">
+                        <option value="">Todos los estados</option>
+                        <option value="lead" {% if stage_filter == 'lead' %}selected{% endif %}>Nuevo</option>
+                        <option value="mql" {% if stage_filter == 'mql' %}selected{% endif %}>Contactado</option>
+                        <option value="sql" {% if stage_filter == 'sql' %}selected{% endif %}>Calificado</option>
+                        <option value="customer" {% if stage_filter == 'customer' %}selected{% endif %}>Cliente</option>
+                    </select>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table crm-table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Contacto</th>
+                                <th>Empresa</th>
+                                <th>Estado</th>
+                                <th>Contacto directo</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crmContactsTableBody">
+                            {% for contact in contacts.items %}
+                            {% set c = contact_dict(contact) %}
+                            <tr data-crm-contact-row="{{ contact.id }}">
+                                <td>
+                                    <div class="crm-contact-name">{{ c.full_name }}</div>
+                                    <div class="crm-contact-meta">{{ c.job_title or '—' }}</div>
+                                </td>
+                                <td>{{ c.company or '—' }}</td>
+                                <td><span class="crm-badge {{ c.stage_class }}">{{ c.stage_label }}</span></td>
+                                <td>
+                                    {% if c.email %}<div><i class="bi bi-envelope me-1"></i>{{ c.email }}</div>{% endif %}
+                                    {% if c.phone %}<div><i class="bi bi-telephone me-1"></i>{{ c.phone }}</div>{% endif %}
+                                </td>
+                                <td class="text-end crm-row-actions">
+                                    {% if c.send_email_url %}
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-crm-email data-crm-email-url="{{ c.send_email_url }}" data-crm-email-to="{{ c.email }}" data-crm-email-name="{{ c.full_name }}">Email</button>
+                                    {% endif %}
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crm-edit="contact" data-crm-payload='{{ c|tojson }}'>Editar</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-crm-delete="contact" data-crm-url="{{ c.destroy_url }}" data-crm-id="{{ contact.id }}">Eliminar</button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr id="crmContactsEmpty">
+                                <td colspan="5" class="text-center text-muted py-4">No hay contactos. Crea el primero con el botón "Nuevo contacto".</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-center mt-3 crm-pagination">
+                    {% if contacts.pages > 1 %}
+                    <nav aria-label="Paginación de contactos">
+                        <ul class="pagination mb-0">
+                            <li class="page-item {% if not contacts.has_prev %}disabled{% endif %}">
+                                <a class="page-link" href="{% if contacts.has_prev %}{{ url_for('dashboard.index', page=contacts.prev_num, q=search, stage=stage_filter) }}{% else %}#{% endif %}">Anterior</a>
+                            </li>
+                            {% for p in contacts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                                {% if p %}
+                                <li class="page-item {% if p == contacts.page %}active{% endif %}">
+                                    <a class="page-link" href="{{ url_for('dashboard.index', page=p, q=search, stage=stage_filter) }}">{{ p }}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled"><span class="page-link">…</span></li>
+                                {% endif %}
+                            {% endfor %}
+                            <li class="page-item {% if not contacts.has_next %}disabled{% endif %}">
+                                <a class="page-link" href="{% if contacts.has_next %}{{ url_for('dashboard.index', page=contacts.next_num, q=search, stage=stage_filter) }}{% else %}#{% endif %}">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="crm-panel">
+                        <div class="crm-panel-head compact">
+                            <div>
+                                <h2>Empresas</h2>
+                                <p>Cuentas y prospectos.</p>
+                            </div>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#crmImportModal">
+                                    <i class="bi bi-upload"></i> CSV
+                                </button>
+                                <button type="button" class="btn btn-sm btn-dark" data-crm-open="company">
+                                    <i class="bi bi-plus-lg"></i> Nueva empresa
+                                </button>
+                            </div>
+                        </div>
+                        <div class="crm-list" id="crmCompaniesList">
+                            {% for company in companies %}
+                            {% set co = company_dict(company) %}
+                            <div class="crm-list-item crm-list-item--actions" data-crm-company-row="{{ company.id }}">
+                                <div>
+                                    <div class="crm-list-title">{{ co.name }}</div>
+                                    <div class="crm-list-meta">{{ co.meta }}</div>
+                                </div>
+                                <div class="crm-row-actions">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crm-edit="company" data-crm-payload='{{ co|tojson }}'>Editar</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-crm-delete="company" data-crm-url="{{ co.destroy_url }}" data-crm-id="{{ company.id }}">Eliminar</button>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="text-muted p-3" id="crmCompaniesEmpty">Sin empresas registradas.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="crm-panel">
+                        <div class="crm-panel-head compact">
+                            <div>
+                                <h2>Oportunidades prioritarias</h2>
+                                <p>Cierres estimados y montos.</p>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" data-crm-open="deal">
+                                <i class="bi bi-plus-lg"></i> Nueva oportunidad
+                            </button>
+                        </div>
+                        <div class="crm-list" id="crmPriorityDealsList">
+                            {% if priority_deals %}
+                            {% for deal in priority_deals[:5] %}
+                            {% set d = deal_dict(deal) %}
+                            <div class="crm-list-item crm-list-item--actions" data-crm-deal-priority-row="{{ deal.id }}">
+                                <div>
+                                    <div class="crm-list-title">{{ d.title }}</div>
+                                    <div class="crm-list-meta">
+                                        {{ d.contact or d.company or '—' }}
+                                        {% if d.expected_close_date %} · cierre {{ d.expected_close_date }}{% endif %}
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="crm-amount-badge">USD {{ "{:,.0f}".format(d.amount) }}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-crm-edit="deal" data-crm-payload='{{ d|tojson }}'>Editar</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-crm-delete="deal" data-crm-url="{{ d.destroy_url }}" data-crm-id="{{ deal.id }}">Eliminar</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-muted p-3" id="crmPriorityDealsEmpty">Sin oportunidades abiertas.</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="crm-panel mb-4">
+                <div class="crm-panel-head compact">
+                    <div>
+                        <h2>Pipeline por etapa</h2>
+                        <p>Valor estimado y probabilidad.</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-dark" data-crm-open="deal">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="crm-pipeline-summary mb-3">
+                    <div><strong>Valor ponderado:</strong> <span id="crmPipelineWeighted">USD {{ "{:,.0f}".format(stats['pipeline_weighted']) }}</span></div>
+                    <div class="text-muted small">Suma de amount × probabilidad</div>
+                </div>
+                <div class="crm-pipeline-list" id="crmPipelineList">
+                    {% for deal in pipeline_deals %}
+                    {% set d = deal_dict(deal) %}
+                    <div class="crm-pipeline-card" data-crm-deal-pipeline-row="{{ deal.id }}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <div class="crm-pipeline-title">{{ d.title }}</div>
+                                <div class="crm-pipeline-company">{{ d.company or '—' }}</div>
+                            </div>
+                            <span class="crm-badge {{ d.stage_class }}">{{ d.stage_label }}</span>
+                        </div>
+                        <div class="crm-progress mb-2">
+                            <div class="crm-progress-bar" style="width: {{ d.probability }}%"></div>
+                        </div>
+                        <div class="d-flex justify-content-between crm-pipeline-footer">
+                            <span>USD {{ "{:,.0f}".format(d.amount) }}</span>
+                            <span>{{ d.probability }}%</span>
+                        </div>
+                        <div class="crm-pipeline-weighted small text-muted mb-2">
+                            Costo probabilístico: USD {{ "{:,.0f}".format(d.weighted) }}
+                        </div>
+                        <div class="crm-row-actions">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-crm-edit="deal" data-crm-payload='{{ d|tojson }}'>Editar</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-crm-delete="deal" data-crm-url="{{ d.destroy_url }}" data-crm-id="{{ deal.id }}">Eliminar</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-muted p-3" id="crmPipelineEmpty">No hay oportunidades en el pipeline.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="crm-panel">
+                <div class="crm-panel-head compact">
+                    <div>
+                        <h2>Actividades</h2>
+                        <p>Seguimientos del equipo.</p>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-dark" data-crm-open="activity">
+                        <i class="bi bi-plus-lg"></i> Nueva
+                    </button>
+                </div>
+                <div class="crm-activity-list" id="crmActivitiesList">
+                    {% for activity in activities %}
+                    {% set a = activity_dict(activity) %}
+                    <div class="crm-activity-card" data-crm-activity-row="{{ activity.id }}">
+                        <div class="d-flex justify-content-between">
+                            <div class="crm-activity-title">{{ a.title }}</div>
+                            <span class="crm-activity-type">{{ a.type_label }}</span>
+                        </div>
+                        <div class="crm-activity-meta">
+                            {{ a.meta }}
+                            {% if a.due_date %} · {{ a.due_date }}{% endif %}
+                        </div>
+                        <div class="crm-activity-status">{{ a.status_label }}</div>
+                        <div class="crm-row-actions mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-crm-edit="activity" data-crm-payload='{{ a|tojson }}'>Editar</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-crm-delete="activity" data-crm-url="{{ a.destroy_url }}" data-crm-id="{{ activity.id }}">Eliminar</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-muted p-3" id="crmActivitiesEmpty">Sin actividades registradas.</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if recent_replies %}
+            <div class="crm-panel mt-4">
+                <div class="crm-panel-head compact">
+                    <div>
+                        <h2>Respuestas recientes</h2>
+                        <p>Correos entrantes de leads (IMAP).</p>
+                    </div>
+                    {% if (stats['email_replies'] or 0) > 0 %}
+                    <span class="badge bg-danger">{{ stats['email_replies'] }} nuevas</span>
+                    {% endif %}
+                </div>
+                <div class="crm-activity-list">
+                    {% for reply in recent_replies %}
+                    <div class="crm-activity-card">
+                        <div class="crm-activity-title">{{ reply.contact.full_name if reply.contact else reply.from_email }}</div>
+                        <div class="crm-activity-meta">{{ reply.subject }}</div>
+                        <div class="crm-activity-status small text-muted">
+                            {% if reply.sent_at %}{{ reply.sent_at.strftime('%d %b %Y %H:%i') }}{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="crm-panel mt-4">
+                <div class="crm-panel-head compact">
+                    <div>
+                        <h2>Resumen pipeline</h2>
+                        <p>Valor total del pipeline abierto.</p>
+                    </div>
+                </div>
+                <div class="crm-payments-total mb-2" id="crmPipelineTotal">USD {{ "{:,.0f}".format(stats['pipeline_total']) }}</div>
+                <div class="text-muted small">Ponderado: <span id="crmPipelineWeightedFooter">USD {{ "{:,.0f}".format(stats['pipeline_weighted']) }}</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'modals.html' %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/crm-dashboard.js') }}"></script>
+{% endblock %}

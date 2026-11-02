@@ -1,0 +1,63 @@
+CloudLab Latam — CRM Dashboard deploy checklist (Hostinger)
+============================================================
+
+Target URL (Laravel): https://cloudlablatam.tech/admin/crm
+Target URL (Flask CRM): https://crm.cloudlablatam.tech/admin/crm  (see deploy/FLASK_CRM_DEPLOY.txt)
+
+If you get 404 → routes not deployed or route cache is stale.
+If you get 500 → missing PHP/view files or database tables.
+
+OPTION A — Flask CRM (recommended upgrade)
+------------------------------------------
+See deploy/FLASK_CRM_DEPLOY.txt
+Set CRM_FLASK_URL in Laravel .env so admin sidebar opens Flask app.
+
+OPTION B — Laravel CRM (built-in)
+---------------------------------
+STEP 1 — Upload these files (exact paths under laravel_app/)
+-------------------------------------------------------------
+routes/web.php
+app/Http/Controllers/Admin/AdminCrmController.php
+app/Http/Controllers/Admin/CRM/DashboardController.php
+app/Http/Controllers/Admin/CRM/ContactController.php
+app/Http/Controllers/Admin/CRM/CompanyController.php
+app/Http/Controllers/Admin/CRM/DealController.php
+app/Http/Controllers/Admin/CRM/ActivityController.php
+app/Support/CrmPresenter.php
+views/admin/layouts/app.blade.php
+views/admin/crm/dashboard.blade.php
+views/admin/crm/setup.blade.php
+views/admin/crm/_modals.blade.php
+views/admin/crm/_contact-form.blade.php
+views/admin/crm/_company-form.blade.php
+public/css/crm-dashboard.css
+public/js/crm-dashboard.js
+
+STEP 2 — Clear caches (REQUIRED)
+---------------------------------
+Delete via File Manager:
+  bootstrap/cache/routes-v7.php
+  bootstrap/cache/config.php
+
+Or SSH:
+  cd laravel_app
+  php artisan route:clear
+  php artisan config:clear
+  php artisan view:clear
+
+STEP 3 — Database tables
+------------------------
+Run in phpMyAdmin (database u987711641_cloudlab23):
+  database/sql/install_missing_tables.sql
+
+STEP 4 — Test
+-------------
+1. Login: https://cloudlablatam.tech/admin/login
+2. CRM:   https://cloudlablatam.tech/admin/crm
+3. Sidebar → "CRM Dashboard"
+
+STEP 5 — Still broken?
+----------------------
+Upload deploy/hostinger-check.php to public/, set CHECK_TOKEN, visit:
+  https://cloudlablatam.tech/hostinger-check.php?token=YOUR_TOKEN
+Check laravel.log for the exact error. DELETE the file after.

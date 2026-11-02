@@ -9,9 +9,9 @@ use DOMNode;
 trait SanitizesInput
 {
     protected array $disallowedTags = [
-        'script', 'iframe', 'object', 'embed', 'form', 'input', 'button',
+        'script', 'object', 'embed', 'form', 'input', 'button',
         'textarea', 'select', 'style', 'link', 'meta', 'base', 'svg', 'math',
-        'frame', 'frameset', 'applet', 'audio', 'video', 'source', 'track',
+        'frame', 'frameset', 'applet', 'audio', 'track',
     ];
 
     protected array $allowedTags = [
@@ -19,6 +19,16 @@ trait SanitizesInput
         'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote',
         'pre', 'code', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td',
         'hr', 'span', 'div', 'figure', 'figcaption', 'sup', 'sub',
+        'iframe', 'video', 'source',
+    ];
+
+    protected array $trustedIframeHosts = [
+        'www.youtube.com',
+        'youtube.com',
+        'www.youtube-nocookie.com',
+        'youtube-nocookie.com',
+        'player.vimeo.com',
+        'vimeo.com',
     ];
 
     /**
@@ -40,12 +50,16 @@ trait SanitizesInput
 
         $this->removeDisallowedTags($dom);
         $this->sanitizeAttributes($dom);
+        $this->sanitizeMediaEmbeds($dom);
 
         libxml_clear_errors();
         libxml_use_internal_errors($previousState);
 
         $output = $dom->saveHTML();
-        return $output !== false ? $output : strip_tags($html);
+        $output = preg_replace('/<\?xml[^>]*>/i', '', $output !== false ? $output : '') ?? '';
+        $output = trim($output);
+
+        return $output !== '' ? $output : strip_tags($html);
     }
 
     protected function removeDisallowedTags(DOMDocument $dom): void
@@ -89,6 +103,12 @@ trait SanitizesInput
         $xpath = new \DOMXPath($dom);
         $nodes = $xpath->query('//*[@*]');
 
+        $allowedAttrs = [
+            'href', 'src', 'alt', 'title', 'class', 'id',
+            'colspan', 'rowspan', 'width', 'height',
+            'frameborder', 'allow', 'allowfullscreen', 'controls', 'poster', 'type',
+        ];
+
         foreach ($nodes as $node) {
             if (!$node instanceof DOMElement) {
                 continue;
@@ -119,11 +139,50 @@ trait SanitizesInput
                     continue;
                 }
 
-                if (!in_array($lower, ['href', 'src', 'alt', 'title', 'class', 'id', 'colspan', 'rowspan', 'width', 'height'], true)) {
+                if (!in_array($lower, $allowedAttrs, true)) {
                     $node->removeAttribute($name);
                 }
             }
         }
+    }
+
+    /**
+     * Keep only trusted video iframes; drop anything else.
+     */
+    protected function sanitizeMediaEmbeds(DOMDocument $dom): void
+    {
+        $iframes = $dom->getElementsByTagName('iframe');
+        for ($i = $iframes->length - 1; $i >= 0; $i--) {
+            $iframe = $iframes->item($i);
+            if (!$iframe instanceof DOMElement) {
+                continue;
+            }
+
+            $src = trim($iframe->getAttribute('src'));
+            if ($src === '' || !$this->isTrustedIframeSrc($src)) {
+                $parent = $iframe->parentNode;
+                if ($parent) {
+                    $parent->removeChild($iframe);
+                }
+                continue;
+            }
+
+            $iframe->setAttribute('frameborder', '0');
+            $iframe->setAttribute('allowfullscreen', 'true');
+            if (!$iframe->hasAttribute('class')) {
+                $iframe->setAttribute('class', 'ql-video');
+            }
+        }
+    }
+
+    protected function isTrustedIframeSrc(string $src): bool
+    {
+        if (!preg_match('#^https?://#i', $src)) {
+            return false;
+        }
+
+        $host = strtolower((string) parse_url($src, PHP_URL_HOST));
+        return in_array($host, $this->trustedIframeHosts, true);
     }
 
     protected function isUnsafeUrl(string $value): bool

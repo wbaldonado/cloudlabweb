@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ContactMessage;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,10 +17,12 @@ class ContactController extends Controller
             ->with('pageType', 'contact');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse|JsonResponse
     {
+        $wantsJson = $request->expectsJson() || $request->ajax();
+
         if ($request->filled('website')) {
-            return redirect()->route('contact.index')->with('success', __('messages.contact.success'));
+            return $this->contactRedirect($request, $wantsJson, __('messages.contact.success'));
         }
 
         $validated = $request->validate([
@@ -27,26 +30,31 @@ class ContactController extends Controller
             'email' => 'required|email:rfc,dns|max:255',
             'company' => 'nullable|string|max:255',
             'subject' => 'nullable|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|max:5000',
         ]);
 
-        $recipient = config('mail.from.address');
-        
+        if ($request->input('return_to') === 'home' && empty($validated['subject'])) {
+            $validated['subject'] = __('messages.landing.form_subject');
+        }
+
+        $recipient = config('mail.contact_to', 'info@cloudlablatam.com');
+
         if (empty($recipient)) {
-            Log::error('Contact form email failed: MAIL_FROM_ADDRESS not configured');
-            return redirect()
-                ->route('contact.index')
-                ->with('error', __('messages.contact.error'));
+            Log::error('Contact form email failed: CONTACT_TO_EMAIL / mail.contact_to not configured');
+
+            return $this->contactFailure($request, $wantsJson, __('messages.contact.error'));
         }
 
         try {
-            // Check if mail password is configured
             $mailPassword = config('mail.mailers.smtp.password');
             if (empty($mailPassword) || $mailPassword === 'null') {
                 Log::error('Contact form email failed: MAIL_PASSWORD not configured in .env file');
-                return redirect()
-                    ->route('contact.index')
-                    ->with('error', __('messages.contact.error') . ' (SMTP password not configured)');
+
+                return $this->contactFailure(
+                    $request,
+                    $wantsJson,
+                    __('messages.contact.error') . ' (SMTP password not configured)'
+                );
             }
 
             Mail::to($recipient)->send(new ContactMessage($validated));
@@ -67,7 +75,6 @@ class ContactController extends Controller
                 'smtp_username' => config('mail.mailers.smtp.username'),
             ]);
 
-            // Provide more specific error message
             $userMessage = __('messages.contact.error');
             if (str_contains($errorMessage, 'password') || str_contains($errorMessage, 'authentication')) {
                 $userMessage .= ' (Verifica la contraseña SMTP)';
@@ -75,13 +82,35 @@ class ContactController extends Controller
                 $userMessage .= ' (Error de conexión SMTP)';
             }
 
-            return redirect()
-                ->route('contact.index')
-                ->with('error', $userMessage);
+            return $this->contactFailure($request, $wantsJson, $userMessage);
         }
 
-        return redirect()
-            ->route('contact.index')
-            ->with('success', __('messages.contact.success'));
+        return $this->contactRedirect($request, $wantsJson, __('messages.contact.success'));
+    }
+
+    private function contactRedirect(Request $request, bool $wantsJson, string $message): RedirectResponse|JsonResponse
+    {
+        if ($wantsJson) {
+            return response()->json(['ok' => true, 'message' => $message]);
+        }
+
+        $target = $request->input('return_to') === 'home'
+            ? route('home') . '#contacto'
+            : route('contact.index');
+
+        return redirect()->to($target)->with('success', $message);
+    }
+
+    private function contactFailure(Request $request, bool $wantsJson, string $message): RedirectResponse|JsonResponse
+    {
+        if ($wantsJson) {
+            return response()->json(['ok' => false, 'message' => $message], 422);
+        }
+
+        $target = $request->input('return_to') === 'home'
+            ? route('home') . '#contacto'
+            : route('contact.index');
+
+        return redirect()->to($target)->with('error', $message);
     }
 }

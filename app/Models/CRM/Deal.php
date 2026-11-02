@@ -59,5 +59,35 @@ class Deal extends Model
     {
         return !$this->isWon() && !$this->isLost();
     }
+
+    public function weightedValue(): float
+    {
+        return (float) $this->amount * ($this->probability / 100);
+    }
+
+    public function stageLabel(): string
+    {
+        return match ($this->stage) {
+            'prospecting' => 'Prospección',
+            'qualified' => 'Calificación',
+            'proposal' => 'Propuesta',
+            'negotiation' => 'Negociación',
+            'won' => 'Ganada',
+            'lost' => 'Perdida',
+            default => ucfirst($this->stage),
+        };
+    }
+
+    public function stageBadgeClass(): string
+    {
+        return match ($this->stage) {
+            'won' => 'crm-badge--won',
+            'lost' => 'crm-badge--lost',
+            'negotiation' => 'crm-badge--negotiation',
+            'proposal' => 'crm-badge--proposal',
+            'qualified' => 'crm-badge--qualified',
+            default => 'crm-badge--prospecting',
+        };
+    }
 }
 

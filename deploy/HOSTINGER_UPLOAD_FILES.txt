@@ -1,0 +1,57 @@
+﻿CloudLab Latam - UPLOAD MANIFEST FOR HOSTINGER
+Generated: 2026-05-31 17:48
+Target server path: .../domains/cloudlablatam.tech/laravel_app/
+Document root MUST be: .../laravel_app/public
+
+=== UPLOAD THESE FOLDERS (entire folder) ===
+  app/
+  bootstrap/
+  config/
+  database/
+  deploy/
+  docs/
+  lang/
+  public/
+  resources/
+  routes/
+  storage/
+  vendor/
+  views/
+
+=== UPLOAD THESE ROOT FILES ===
+  artisan
+  composer.json
+  composer.lock
+  .env.hostinger.example
+  .htaccess
+
+=== DO NOT UPLOAD ===
+  .env (create on server from .env.hostinger.example)
+  .git/
+  node_modules/
+  tests/ (optional)
+  bootstrap/cache/*.php (empty cache on server)
+
+=== AFTER UPLOAD (SSH or Terminal) ===
+  cd laravel_app
+  cp .env.hostinger.example .env   # then edit DB + APP_URL
+  php artisan key:generate --force
+  php artisan storage:link
+  php artisan migrate --force   # OR import database/sql/hostinger_schema.sql
+  php artisan config:cache
+  php artisan route:cache
+  php artisan view:cache
+  chmod -R 775 storage bootstrap/cache
+
+=== .env MINIMUM (production) ===
+  APP_ENV=production
+  APP_DEBUG=false
+  APP_URL=https://cloudlablatam.tech
+  DB_HOST=localhost
+  DB_DATABASE=...
+  DB_USERNAME=...
+  DB_PASSWORD=...
+  SESSION_SECURE_COOKIE=true
+  TRUSTED_PROXIES=*
+
+See docs/DEPLOY_HOSTINGER.md

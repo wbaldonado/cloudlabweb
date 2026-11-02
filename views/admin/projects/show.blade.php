@@ -13,8 +13,8 @@
 
 <div class="card">
     <div class="card-body">
-        @if($project->image)
-        <img src="{{ asset('storage/' . $project->image) }}" class="img-fluid mb-3" alt="{{ $project->title }}">
+        @if($project->image_url)
+        <img src="{{ $project->image_url }}" class="img-fluid mb-3" alt="{{ $project->title }}">
         @endif
         
         <p><strong>Status:</strong> 
@@ -39,8 +39,8 @@
         
         @if($project->content)
         <p><strong>Content:</strong></p>
-        <div class="border p-3 mb-3">
-            {!! nl2br(e($project->content)) !!}
+        <div class="border p-3 mb-3 project-content">
+            {!! $project->content !!}
         </div>
         @endif
         
