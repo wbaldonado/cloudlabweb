@@ -57,7 +57,7 @@ class ContactController extends Controller
                 );
             }
 
-            Mail::to($recipient)->send(new ContactMessage($validated));
+            $this->deliverContactMessage($recipient, $validated);
             Log::info('Contact form email sent successfully', [
                 'to' => $recipient,
                 'from' => $validated['email'],
@@ -70,6 +70,7 @@ class ContactController extends Controller
                 'line' => $exception->getLine(),
                 'to' => $recipient,
                 'from' => $validated['email'] ?? 'unknown',
+                'subject' => $validated['subject'] ?? '',
                 'smtp_host' => config('mail.mailers.smtp.host'),
                 'smtp_port' => config('mail.mailers.smtp.port'),
                 'smtp_username' => config('mail.mailers.smtp.username'),
@@ -86,6 +87,37 @@ class ContactController extends Controller
         }
 
         return $this->contactRedirect($request, $wantsJson, __('messages.contact.success'));
+    }
+
+    /**
+     * Send the notice from the brand mailbox. If Hostinger rejects it as spam
+     * because Reply-To is an outside address, send once more without that header.
+     */
+    private function deliverContactMessage(string $recipient, array $validated): void
+    {
+        try {
+            Mail::to($recipient)->send(new ContactMessage($validated));
+        } catch (\Throwable $exception) {
+            if (! $this->isSpamRejection($exception)) {
+                throw $exception;
+            }
+
+            $fallback = new ContactMessage($validated);
+            $fallback->includeReplyTo = false;
+            Mail::to($recipient)->send($fallback);
+
+            Log::warning('Contact form email accepted only without Reply-To', [
+                'to' => $recipient,
+                'from' => $validated['email'] ?? 'unknown',
+            ]);
+        }
+    }
+
+    private function isSpamRejection(\Throwable $exception): bool
+    {
+        $message = $exception->getMessage();
+
+        return str_contains($message, '554') || str_contains($message, 'Spam message rejected');
     }
 
     private function contactRedirect(Request $request, bool $wantsJson, string $message): RedirectResponse|JsonResponse

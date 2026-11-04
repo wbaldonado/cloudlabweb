@@ -13,6 +13,12 @@ class ContactMessage extends Mailable
     public array $data;
 
     /**
+     * Hostinger rejects some notices when Reply-To is another domain.
+     * The visitor address stays in the body either way.
+     */
+    public bool $includeReplyTo = true;
+
+    /**
      * Create a new message instance.
      */
     public function __construct(array $data)
@@ -25,18 +31,26 @@ class ContactMessage extends Mailable
      */
     public function build(): self
     {
-        $subject = $this->data['subject'] ?? __('messages.contact.default_subject');
-        
-        // Use company name as "From" name, or person's name if no company
-        $fromName = !empty($this->data['company']) 
-            ? $this->data['company'] 
-            : ($this->data['name'] ?? config('mail.from.name'));
+        $subject = trim((string) ($this->data['subject'] ?? ''));
+        if ($subject === '') {
+            $subject = __('messages.contact.default_subject');
+        }
+        if (! str_starts_with($subject, '[CloudLab]')) {
+            $subject = '[CloudLab] ' . $subject;
+        }
 
-        return $this->subject($subject)
-            ->from(config('mail.from.address'), $fromName)
-            ->replyTo($this->data['email'], $this->data['name'])
+        $mail = $this->subject($subject)
+            ->from(config('mail.from.address'), config('mail.from.name'))
             ->view('emails.contact_message_simple')
             ->text('emails.contact_message_plain');
+
+        $replyTo = trim((string) ($this->data['email'] ?? ''));
+        if ($this->includeReplyTo && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
+            $replyName = trim((string) ($this->data['name'] ?? ''));
+            $mail->replyTo($replyTo, $replyName !== '' ? $replyName : null);
+        }
+
+        return $mail;
     }
 }
 
