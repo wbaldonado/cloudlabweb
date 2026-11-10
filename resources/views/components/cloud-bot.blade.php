@@ -88,6 +88,9 @@
      data-wa-number="{{ $cbWaNumber }}"
      data-wa-url="{{ $cbWaUrl }}"
      data-contact-store="{{ route('contact.store') }}"
+     data-contact-token="{{ \App\Support\ContactFormGuard::token() }}"
+     data-turnstile-sitekey="{{ config('services.turnstile.site_key') }}"
+     data-turnstile-required="{{ __('messages.contact.human_required') }}"
      data-avatar="{{ $cbAvatar256 }}?v={{ $cbAvatarVer }}"
      data-avatar-fallback="{{ $cbAvatar256Alt }}?v={{ $cbAvatarVer }}"
      data-avatar-svg="{{ $cbAvatarSvg }}?v={{ $cbAvatarVer }}"
@@ -197,6 +200,9 @@ window.clBootCloudBot = function () {
     var waNumber = root.getAttribute('data-wa-number') || '';
     var waUrl = 'https://wa.me/' + waNumber + '?text=' + encodeURIComponent(i18n.whatsappPrefill || '');
     var contactStore = root.getAttribute('data-contact-store') || '/contact';
+    var contactToken = root.getAttribute('data-contact-token') || '';
+    var turnstileSitekey = root.getAttribute('data-turnstile-sitekey') || '';
+    var turnstileRequired = root.getAttribute('data-turnstile-required') || '';
     var openDelay = parseInt(root.getAttribute('data-open-delay') || '1800', 10);
     var avatarUrl = root.getAttribute('data-avatar') || @json($cbAvatar256 . '?v=' . $cbAvatarVer);
     var avatarFallback = root.getAttribute('data-avatar-fallback') || '';
@@ -402,6 +408,25 @@ window.clBootCloudBot = function () {
         return wrap;
     }
 
+    function mountTurnstile(holder) {
+        var attempts = 0;
+        function render() {
+            if (window.turnstile) {
+                window.turnstile.render(holder, {
+                    sitekey: turnstileSitekey,
+                    theme: 'light',
+                    language: locale
+                });
+                return;
+            }
+            attempts += 1;
+            if (attempts < 25) {
+                setTimeout(render, 200);
+            }
+        }
+        render();
+    }
+
     function showContactForm(topicId) {
         var existing = messages.querySelector('.cloud-bot-contact');
         if (existing) existing.remove();
@@ -414,9 +439,15 @@ window.clBootCloudBot = function () {
         contactForm.setAttribute('novalidate', 'novalidate');
         contactForm.setAttribute('lang', locale);
 
+        var issued = document.createElement('input');
+        issued.type = 'hidden';
+        issued.name = 'form_token';
+        issued.value = contactToken;
+        contactForm.appendChild(issued);
+
         var honeypot = document.createElement('input');
         honeypot.type = 'text';
-        honeypot.name = 'website';
+        honeypot.name = 'cl_hp';
         honeypot.tabIndex = -1;
         honeypot.autocomplete = 'off';
         honeypot.value = '';
@@ -426,10 +457,17 @@ window.clBootCloudBot = function () {
 
         contactForm.appendChild(field(i18n.contactName, 'name', 'text', i18n.contactNamePh, true));
         contactForm.appendChild(field(i18n.contactEmail, 'email', 'email', i18n.contactEmailPh, true));
-        contactForm.appendChild(field(i18n.contactCompany, 'company', 'text', i18n.contactCompanyPh, false));
+        contactForm.appendChild(field(i18n.contactCompany, 'company', 'text', i18n.contactCompanyPh, true));
         contactForm.appendChild(field(i18n.contactSubject, 'subject', 'text', '', false, i18n.formSubject));
         contactForm.appendChild(field(i18n.contactMessage, 'message', 'textarea', i18n.contactMessagePh, true,
             topicLabels[topicId] ? topicLabels[topicId] : ''));
+
+        if (turnstileSitekey) {
+            var turnstileHolder = document.createElement('div');
+            turnstileHolder.className = 'cloud-bot-turnstile';
+            contactForm.appendChild(turnstileHolder);
+            mountTurnstile(turnstileHolder);
+        }
 
         var status = document.createElement('p');
         status.className = 'cloud-bot-contact__status';
@@ -465,8 +503,16 @@ window.clBootCloudBot = function () {
             e.preventDefault();
             var name = (contactForm.querySelector('[name="name"]').value || '').trim();
             var email = (contactForm.querySelector('[name="email"]').value || '').trim();
+            var company = (contactForm.querySelector('[name="company"]').value || '').trim();
             var message = (contactForm.querySelector('[name="message"]').value || '').trim();
-            if (!name || !email || !message) {
+            var turnstileToken = (contactForm.querySelector('[name="cf-turnstile-response"]') || {}).value || '';
+            if (turnstileSitekey && !turnstileToken) {
+                status.hidden = false;
+                status.className = 'cloud-bot-contact__status is-error';
+                status.textContent = turnstileRequired;
+                return;
+            }
+            if (!name || !email || !company || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                 status.hidden = false;
                 status.className = 'cloud-bot-contact__status is-error';
                 status.textContent = i18n.formRequired;

@@ -21,6 +21,10 @@
             @if(!empty($data['subject']))
             <p><strong>{{ __('messages.contact.subject') }}:</strong> {{ $data['subject'] }}</p>
             @endif
+
+            @if(!empty($data['reference']))
+            <p><strong>{{ __('messages.contact.confirm_reference_label') }}:</strong> {{ $data['reference'] }}</p>
+            @endif
         </div>
         
         <div style="margin: 20px 0;">

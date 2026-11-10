@@ -1690,6 +1690,27 @@ a.cloud-bot__action.is-primary {
     padding: 1.5rem;
 }
 .cl-contact-narrow { max-width: 720px; }
+.cl-hp {
+    position: absolute !important;
+    left: -10000px !important;
+    top: 0 !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+}
+.cl-landing-form .cl-hp label,
+.cl-landing-form .cl-hp input {
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+}
 .cl-landing-form label {
     display: block;
     font-weight: 600;
@@ -1710,6 +1731,7 @@ a.cloud-bot__action.is-primary {
     border-color: var(--brand-cyan-dark);
     box-shadow: 0 0 0 3px rgba(0, 168, 197, 0.2);
 }
+.cl-turnstile { min-height: 65px; }
 .cl-landing-form button {
     border: 0;
     cursor: pointer;

@@ -11,6 +11,10 @@
 {{ __('messages.contact.subject') }}: {{ $data['subject'] }}
 @endif
 
+@if(!empty($data['reference']))
+{{ __('messages.contact.confirm_reference_label') }}: {{ $data['reference'] }}
+@endif
+
 {{ __('messages.contact.message') }}:
 
 {{ $data['message'] }}

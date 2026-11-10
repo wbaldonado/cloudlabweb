@@ -46,8 +46,7 @@ class ContactMessage extends Mailable
 
         $replyTo = trim((string) ($this->data['email'] ?? ''));
         if ($this->includeReplyTo && filter_var($replyTo, FILTER_VALIDATE_EMAIL)) {
-            $replyName = trim((string) ($this->data['name'] ?? ''));
-            $mail->replyTo($replyTo, $replyName !== '' ? $replyName : null);
+            $mail->replyTo($replyTo);
         }
 
         return $mail;

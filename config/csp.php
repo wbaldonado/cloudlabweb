@@ -26,6 +26,7 @@ return [
         'script-src' => [
             "'self'",
             'https://cdn.jsdelivr.net',
+            'https://challenges.cloudflare.com',
         ],
         'style-src' => [
             "'self'",
@@ -51,6 +52,7 @@ return [
         ],
         'connect-src' => [
             "'self'",
+            'https://challenges.cloudflare.com',
         ],
         'frame-src' => [
             "'self'",
@@ -60,6 +62,7 @@ return [
             'https://www.youtube.com',
             'https://www.youtube-nocookie.com',
             'https://player.vimeo.com',
+            'https://challenges.cloudflare.com',
         ],
         'worker-src' => ["'self'", 'blob:'],
         'manifest-src' => ["'self'"],

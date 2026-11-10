@@ -130,9 +130,10 @@
             <form class="cl-landing-form" action="{{ route('contact.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="return_to" value="home">
-                <div aria-hidden="true" style="position:absolute;left:-9999px;height:0;overflow:hidden;">
-                    <label for="website">Website</label>
-                    <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                <input type="hidden" name="form_token" value="{{ \App\Support\ContactFormGuard::token() }}">
+                <div class="cl-hp" aria-hidden="true">
+                    <label for="cl-hp">HP</label>
+                    <input type="text" name="cl_hp" id="cl-hp" tabindex="-1" autocomplete="off" value="">
                 </div>
                 <div class="mb-3">
                     <label for="landing-name">{{ __('messages.contact.name') }}</label>
@@ -141,14 +142,20 @@
                 </div>
                 <div class="mb-3">
                     <label for="landing-email">{{ __('messages.landing.contact_email') }}</label>
-                    <input id="landing-email" name="email" type="email" value="{{ old('email') }}" required maxlength="255" autocomplete="email">
+                    <input id="landing-email" name="email" type="email" value="{{ old('email') }}" required maxlength="255" autocomplete="email" inputmode="email" title="{{ __('messages.contact.email_invalid') }}">
                     @error('email')<p class="cl-field-error">{{ $message }}</p>@enderror
+                </div>
+                <div class="mb-3">
+                    <label for="landing-company">{{ __('messages.contact.company') }}</label>
+                    <input id="landing-company" name="company" type="text" value="{{ old('company') }}" required maxlength="255" autocomplete="organization">
+                    @error('company')<p class="cl-field-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="mb-3">
                     <label for="landing-message">{{ __('messages.landing.contact_process') }}</label>
                     <textarea id="landing-message" name="message" rows="4" required maxlength="5000">{{ old('message') }}</textarea>
                     @error('message')<p class="cl-field-error">{{ $message }}</p>@enderror
                 </div>
+                @include('components.turnstile-widget')
                 <button type="submit" class="cl-btn-solid">{{ __('messages.landing.schedule') }}</button>
             </form>
         </div>

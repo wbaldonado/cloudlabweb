@@ -75,8 +75,9 @@
 
                     <form id="contactForm" action="{{ route('contact.store') }}" method="POST" class="contact-form">
                         @csrf
-                        <div class="visually-hidden" aria-hidden="true" style="position:absolute;left:-9999px;height:0;overflow:hidden;">
-                            <input type="text" name="website" tabindex="-1" autocomplete="off" value="">
+                        <input type="hidden" name="form_token" value="{{ \App\Support\ContactFormGuard::token() }}">
+                        <div class="cl-hp" aria-hidden="true">
+                            <input type="text" name="cl_hp" tabindex="-1" autocomplete="off" value="">
                         </div>
                         <div class="row mb-4">
                             <div class="col-md-6 mb-4 mb-md-0">
@@ -115,14 +116,15 @@
 
                         <div class="row mb-4">
                             <div class="col-md-6 mb-4 mb-md-0">
-                                <label for="company" class="form-label block mb-2 font-semibold text-gray-700">{{ __('messages.contact.company') }}</label>
+                                <label for="company" class="form-label block mb-2 font-semibold text-gray-700">{{ __('messages.contact.company') }} *</label>
                                 <div class="relative input-wrapper">
                                     <input type="text" 
                                            class="form-control input-field @error('company') is-invalid border-red-500 @enderror" 
                                            id="company" 
                                            name="company" 
                                            value="{{ old('company') }}" 
-                                           placeholder="{{ __('messages.contact.company_placeholder') }}">
+                                           placeholder="{{ __('messages.contact.company_placeholder') }}"
+                                           required>
                                     <div class="input-focus-ring"></div>
                                 </div>
                                 @error('company')
@@ -161,6 +163,8 @@
                             <div class="invalid-feedback mt-1 text-red-600 text-sm animate-shake">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        @include('components.turnstile-widget')
 
                         <button type="submit" 
                                 id="submitBtn"

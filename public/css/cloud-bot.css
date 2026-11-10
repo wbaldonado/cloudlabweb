@@ -319,6 +319,9 @@ a.cloud-bot__action.is-primary {
 .cloud-bot-contact__control:focus {
     border-color: #00e5ff;
 }
+.cloud-bot-turnstile {
+    margin: 0.35rem 0 0.15rem;
+}
 .cloud-bot-contact__hp {
     position: absolute !important;
     left: -9999px !important;

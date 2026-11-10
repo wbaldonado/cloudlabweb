@@ -50,7 +50,25 @@ class RouteServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('contact', function (Request $request) {
-            return Limit::perMinute(5)->by($request->ip());
+            $limited = function (Request $request, array $headers) {
+                $message = __('messages.contact.too_many');
+                if ($request->expectsJson() || $request->ajax()) {
+                    return response()->json(['ok' => false, 'message' => $message], 429, $headers);
+                }
+
+                $locale = $request->route('locale');
+                $locale = is_string($locale) && in_array($locale, ['es', 'en'], true) ? $locale : 'es';
+                $target = $request->input('return_to') === 'home'
+                    ? url('/'.$locale).'#contacto'
+                    : url('/'.$locale.'/contact');
+
+                return redirect()->to($target)->with('error', $message);
+            };
+
+            return [
+                Limit::perMinute(2)->by('contact-minute:'.$request->ip())->response($limited),
+                Limit::perHour(6)->by('contact-hour:'.$request->ip())->response($limited),
+            ];
         });
 
         RateLimiter::for('blog-interaction', function (Request $request) {

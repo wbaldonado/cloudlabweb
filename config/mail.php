@@ -42,7 +42,7 @@ return [
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            'local_domain' => env('MAIL_EHLO_DOMAIN', 'cloudlablatam.com'),
         ],
 
         'ses' => [
@@ -106,6 +106,8 @@ return [
     */
 
     'contact_to' => env('CONTACT_TO_EMAIL', 'info@cloudlablatam.com'),
+
+    'contact_imap_host' => env('MAIL_IMAP_HOST', 'imap.hostinger.com'),
 
     /*
     |--------------------------------------------------------------------------

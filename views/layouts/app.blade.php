@@ -3686,6 +3686,32 @@
     </script>
 
     <script src="{{ asset('js/card-glow.js') }}" defer></script>
+    @if(config('services.turnstile.site_key'))
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <script nonce="{{ $cspNonce ?? '' }}">
+            document.addEventListener('submit', function (event) {
+                var form = event.target;
+                if (!form || !form.querySelector || !form.querySelector('.cf-turnstile')) {
+                    return;
+                }
+                var token = form.querySelector('[name="cf-turnstile-response"]');
+                if (token && token.value) {
+                    return;
+                }
+                event.preventDefault();
+                var widget = form.querySelector('.cl-turnstile');
+                var alertBox = form.querySelector('.cl-turnstile-error');
+                if (!alertBox && widget) {
+                    alertBox = document.createElement('p');
+                    alertBox.className = 'cl-field-error cl-turnstile-error';
+                    widget.appendChild(alertBox);
+                }
+                if (alertBox) {
+                    alertBox.textContent = @json(__('messages.contact.human_required'));
+                }
+            }, true);
+        </script>
+    @endif
     @stack('scripts')
 </body>
 </html>
