@@ -861,7 +861,7 @@
 .cl-tech-group .cl-tech-item--row {
     flex: none;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
     width: 100%;
     max-width: none;
@@ -882,11 +882,20 @@
     text-shadow: none;
 }
 .cl-tech-group .cl-tech-item--row .tech-icon-media {
-    margin: 0;
+    margin: 0.1rem 0 0;
     flex: 0 0 auto;
 }
 .cl-tech-group .cl-tech-item--row .tech-icon-media:has(img[src*="n8n.png"]) {
-    width: 108px;
+    overflow: hidden;
+    align-items: center;
+    justify-content: flex-start;
+}
+.cl-tech-group .cl-tech-item--row .tech-icon-media:has(img[src*="n8n.png"]) .tech-icon-image {
+    width: 178%;
+    height: auto;
+    max-width: none;
+    object-fit: fill;
+    object-position: left center;
 }
 .cl-tech-group .cl-tech-item--row .cl-tech-copy {
     min-width: 0;
