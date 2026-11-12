@@ -165,21 +165,104 @@
         <div class="container">
             <h2 class="cl-section-title">{{ __('messages.home.technologies_title') }}</h2>
             <p class="cl-section-subtitle">{{ __('messages.home.technologies_subtitle') }}</p>
-            @if(isset($technologies) && $technologies->isNotEmpty())
-                <div class="cl-tech-grid mb-4">
-                    @foreach($technologies as $technology)
-                        <div class="cl-tech-item">
-                            @include('components.technology-icon', ['technology' => $technology, 'size' => 44])
-                            <h4>{{ $technology->name }}</h4>
+            @php
+                $techCatalog = isset($technologies) ? $technologies : collect();
+                $techGroups = [
+                    [
+                        'title' => __('messages.home.tech_group_data'),
+                        'theme' => 'data',
+                        'art_view' => '90 15 190 210',
+                        'layout' => 'list',
+                        'members' => [
+                            ['match' => 'fabric', 'label' => 'Fabric', 'description' => __('messages.home.tech_fabric_desc')],
+                            ['match' => 'power bi', 'label' => 'Power BI', 'description' => __('messages.home.tech_powerbi_desc')],
+                            ['match' => 'tableau', 'label' => 'Tableau', 'description' => __('messages.home.tech_tableau_desc')],
+                        ],
+                    ],
+                    [
+                        'title' => __('messages.home.tech_group_automation'),
+                        'theme' => 'automation',
+                        'art_view' => '70 10 220 190',
+                        'layout' => 'list',
+                        'members' => [
+                            ['match' => 'uipath', 'label' => 'UiPath', 'icon' => 'images/technologies/uipath.png', 'description' => __('messages.home.tech_uipath_desc')],
+                            ['match' => 'power automate', 'label' => 'Power Automate', 'description' => __('messages.home.tech_power_automate_desc')],
+                            ['match' => 'python', 'label' => 'Python', 'description' => __('messages.home.tech_python_automation_desc')],
+                        ],
+                    ],
+                    [
+                        'title' => __('messages.home.tech_group_ai'),
+                        'theme' => 'ai',
+                        'art_view' => '70 5 210 225',
+                        'layout' => 'list',
+                        'members' => [
+                            ['match' => 'python', 'label' => 'Python', 'description' => __('messages.home.tech_python_agents_desc')],
+                            ['match' => 'copilot', 'label' => 'Copilot Studio', 'description' => __('messages.home.tech_copilot_desc')],
+                            ['match' => 'n8n', 'label' => 'n8n', 'description' => __('messages.home.tech_n8n_desc')],
+                        ],
+                    ],
+                    [
+                        'title' => __('messages.home.tech_group_cloud'),
+                        'theme' => 'cloud',
+                        'art_view' => '120 5 175 210',
+                        'layout' => 'list',
+                        'members' => [
+                            ['match' => 'azure', 'label' => 'Azure', 'icon' => 'images/technologies/azure.png', 'description' => __('messages.home.tech_azure_desc')],
+                            ['match' => 'aws', 'label' => 'AWS', 'icon' => 'images/technologies/aws.png', 'description' => __('messages.home.tech_aws_desc')],
+                        ],
+                    ],
+                ];
+            @endphp
+            @include('components.tech-group-sprite')
+            <div class="cl-tech-groups mb-4">
+                @foreach($techGroups as $group)
+                    <article class="cl-tech-group cl-tech-group--{{ $group['theme'] }}">
+                        <div class="cl-tech-art" aria-hidden="true">
+                            <span class="cl-tech-art-glow"></span>
+                            <svg class="cl-tech-art-soft" viewBox="{{ $group['art_view'] }}" preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <use href="#cl-tech-art-{{ $group['theme'] }}" width="300" height="300"></use>
+                            </svg>
+                            <svg class="cl-tech-art-sharp" viewBox="{{ $group['art_view'] }}" preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <use href="#cl-tech-art-{{ $group['theme'] }}" width="300" height="300"></use>
+                            </svg>
                         </div>
-                    @endforeach
-                </div>
-                <div class="text-center">
-                    <a href="{{ route('public.technologies.index') }}" class="cl-section-link">{{ __('messages.home.view_technologies') }} →</a>
-                </div>
-            @else
-                <div class="cl-empty">{{ __('messages.home.no_technologies') }}</div>
-            @endif
+                        <div class="cl-tech-group-body">
+                        <h3>{{ $group['title'] }}</h3>
+                        <div class="cl-tech-group-items {{ ($group['layout'] ?? '') === 'list' ? 'cl-tech-group-items--list' : '' }}">
+                            @foreach($group['members'] as $member)
+                                @php
+                                    $technology = $techCatalog->first(function ($item) use ($member) {
+                                        return str_contains(mb_strtolower((string) $item->name), $member['match']);
+                                    });
+                                    if (! $technology) {
+                                        $technology = (object) ['name' => $member['label']];
+                                    }
+                                    $hasCatalogIcon = is_object($technology)
+                                        && method_exists($technology, 'publicIconPath')
+                                        && $technology->publicIconPath();
+                                    if (! $hasCatalogIcon && ! empty($member['icon'])) {
+                                        $technology = (object) [
+                                            'name' => $technology->name ?? $member['label'],
+                                            'icon_path' => $member['icon'],
+                                        ];
+                                    }
+                                    $techDescription = $member['description'] ?? '';
+                                @endphp
+                                <div class="cl-tech-item {{ $techDescription !== '' ? 'cl-tech-item--row' : '' }}">
+                                    @include('components.technology-icon', ['technology' => $technology, 'size' => 44])
+                                    <div class="cl-tech-copy">
+                                        <h4>{{ $technology->name }}</h4>
+                                        @if($techDescription !== '')
+                                            <p>{{ $techDescription }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
         </div>
     </section>
 
