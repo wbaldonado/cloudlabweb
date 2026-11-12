@@ -885,6 +885,9 @@
     margin: 0;
     flex: 0 0 auto;
 }
+.cl-tech-group .cl-tech-item--row .tech-icon-media:has(img[src*="n8n.png"]) {
+    width: 108px;
+}
 .cl-tech-group .cl-tech-item--row .cl-tech-copy {
     min-width: 0;
 }

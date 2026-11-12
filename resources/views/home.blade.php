@@ -197,8 +197,8 @@
                         'layout' => 'list',
                         'members' => [
                             ['match' => 'python', 'label' => 'Python', 'description' => __('messages.home.tech_python_agents_desc')],
-                            ['match' => 'copilot', 'label' => 'Copilot Studio', 'description' => __('messages.home.tech_copilot_desc')],
-                            ['match' => 'n8n', 'label' => 'n8n', 'description' => __('messages.home.tech_n8n_desc')],
+                            ['match' => 'copilot', 'label' => 'Copilot Studio', 'icon' => 'images/technologies/copilot-studio.png', 'description' => __('messages.home.tech_copilot_desc')],
+                            ['match' => 'n8n', 'label' => 'N8n', 'icon' => 'images/technologies/n8n.png', 'description' => __('messages.home.tech_n8n_desc')],
                         ],
                     ],
                     [
