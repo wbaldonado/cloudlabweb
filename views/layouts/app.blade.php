@@ -3388,7 +3388,6 @@
                             <li><a href="{{ route('blogs.index') }}">{{ __('messages.nav.blog') }}</a></li>
                             <li><a href="{{ route('projects.index') }}">{{ __('messages.nav.projects') }}</a></li>
                             <li><a href="{{ route('about.index') }}">{{ __('messages.nav.about') }}</a></li>
-                            <li><a href="{{ route('public.technologies.index') }}">{{ __('messages.nav.technologies') }}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -3437,6 +3436,7 @@
         </div>
     </footer>
 
+    @if(!request()->routeIs('home'))
     <!-- Floating CTA Button -->
     <div class="floating-cta-button">
         <a href="{{ route('home') }}#contacto" 
@@ -3446,6 +3446,7 @@
             <span class="cta-text">{{ __('messages.cta.free_consultation_short') }}</span>
         </a>
     </div>
+    @endif
 
     @if(View::exists('components.cookie-consent'))
         @include('components.cookie-consent')

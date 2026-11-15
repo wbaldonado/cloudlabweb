@@ -146,12 +146,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var root = document.querySelector('[data-landing]');
     if (root) {
+        var calc = root.querySelector('.cl-calc');
         var people = document.getElementById('cl-people');
         var hours = document.getElementById('cl-hours');
         var rate = document.getElementById('cl-rate');
         var locale = root.getAttribute('data-locale') === 'en' ? 'en-US' : 'es-CO';
-        var hoursFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 1 });
-        var moneyFormat = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+        var hoursFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+        var usdFormat = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+        var copFormat = new Intl.NumberFormat(locale, { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+        var numberFormat = new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
+        var unitPerson = calc.getAttribute('data-unit-person');
+        var unitPeople = calc.getAttribute('data-unit-people');
+        var unitHours = calc.getAttribute('data-unit-hours');
+        var unitRate = calc.getAttribute('data-unit-rate');
+        var unitMonth = calc.getAttribute('data-unit-month');
+        var unitYear = calc.getAttribute('data-unit-year');
+        var presets = Array.prototype.slice.call(calc.querySelectorAll('[data-preset]'));
+        var regions = Array.prototype.slice.call(calc.querySelectorAll('[data-region]'));
+        var copPerUsd = 4000;
+        var region = root.getAttribute('data-locale') === 'en' ? 'usd' : 'cop';
+        var latest = { month: '', year: '', detail: '' };
+
+        function placePill(input, pill) {
+            var min = Number(input.min);
+            var max = Number(input.max);
+            var ratio = (Number(input.value) - min) / (max - min);
+            pill.style.left = 'calc(' + (ratio * 100) + '% + ' + ((0.5 - ratio) * 18) + 'px)';
+        }
+
+        function rateFor(button) {
+            return button.getAttribute(region === 'usd' ? 'data-rate-usd' : 'data-rate-cop');
+        }
+
+        function applyMarket(next, preset) {
+            region = next;
+            rate.min = region === 'usd' ? '8' : '8000';
+            rate.max = region === 'usd' ? '80' : '80000';
+            rate.step = region === 'usd' ? '1' : '1000';
+            people.value = preset ? preset.getAttribute('data-people') : '8';
+            hours.value = preset ? preset.getAttribute('data-hours') : '8';
+            rate.value = preset ? rateFor(preset) : (region === 'usd' ? '25' : '25000');
+            render();
+        }
 
         function render() {
             var peopleValue = Number(people.value);
@@ -159,16 +195,90 @@ document.addEventListener('DOMContentLoaded', function () {
             var rateValue = Number(rate.value);
             var freed = peopleValue * hoursValue * 4.33 * 0.7;
             var yearly = freed * 12 * rateValue;
-            document.getElementById('cl-people-out').textContent = String(peopleValue);
-            document.getElementById('cl-hours-out').textContent = String(hoursValue);
-            document.getElementById('cl-rate-out').textContent = String(rateValue);
-            document.getElementById('cl-month').textContent = hoursFormat.format(freed);
-            document.getElementById('cl-year').textContent = moneyFormat.format(yearly);
+            var peopleLabel = String(peopleValue) + ' ' + (peopleValue === 1 ? unitPerson : unitPeople);
+            var hoursLabel = String(hoursValue) + ' ' + unitHours;
+            var rateLabel = region === 'usd'
+                ? '$' + String(rateValue) + unitRate
+                : 'COP ' + numberFormat.format(rateValue) + unitRate;
+            var monthText = hoursFormat.format(Math.round(freed)) + ' ' + unitMonth;
+            var yearText = (region === 'usd' ? usdFormat : copFormat).format(yearly) + ' ' + unitYear;
+            var equiv = document.getElementById('cl-equiv');
+            document.getElementById('cl-people-out').textContent = peopleLabel;
+            document.getElementById('cl-hours-out').textContent = hoursLabel;
+            document.getElementById('cl-rate-out').textContent = rateLabel;
+            document.getElementById('cl-month').textContent = monthText;
+            document.getElementById('cl-year').textContent = yearText;
+            document.getElementById('cl-rate-label').textContent = calc.getAttribute(region === 'usd' ? 'data-rate-label-usd' : 'data-rate-label-cop');
+            document.getElementById('cl-year-label').textContent = calc.getAttribute(region === 'usd' ? 'data-year-label-usd' : 'data-year-label-cop');
+            calc.classList.toggle('is-cop', region === 'cop');
+            if (region === 'cop') {
+                equiv.hidden = false;
+                equiv.textContent = calc.getAttribute('data-equiv').replace(':amount', usdFormat.format(yearly / copPerUsd));
+            } else {
+                equiv.hidden = true;
+                equiv.textContent = '';
+            }
+            people.setAttribute('aria-valuetext', peopleLabel);
+            hours.setAttribute('aria-valuetext', hoursLabel);
+            rate.setAttribute('aria-valuetext', rateLabel);
+            placePill(people, document.getElementById('cl-people-out'));
+            placePill(hours, document.getElementById('cl-hours-out'));
+            placePill(rate, document.getElementById('cl-rate-out'));
+            latest.month = monthText;
+            latest.year = yearText;
+            latest.detail = peopleLabel + ', ' + hoursLabel + ', ' + rateLabel + ', ' + calc.getAttribute(region === 'usd' ? 'data-region-name-usd' : 'data-region-name-cop');
+            presets.forEach(function (button) {
+                var match = Number(button.getAttribute('data-people')) === peopleValue
+                    && Number(button.getAttribute('data-hours')) === hoursValue
+                    && Number(rateFor(button)) === rateValue;
+                button.classList.toggle('is-active', match);
+                button.setAttribute('aria-pressed', match ? 'true' : 'false');
+            });
+            regions.forEach(function (button) {
+                var selected = button.getAttribute('data-region') === region;
+                button.classList.toggle('is-active', selected);
+                button.setAttribute('aria-checked', selected ? 'true' : 'false');
+            });
         }
 
         [people, hours, rate].forEach(function (input) {
             input.addEventListener('input', render);
         });
+        presets.forEach(function (button) {
+            button.addEventListener('click', function () {
+                people.value = button.getAttribute('data-people');
+                hours.value = button.getAttribute('data-hours');
+                rate.value = rateFor(button);
+                render();
+            });
+        });
+        regions.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var selected = presets.filter(function (item) { return item.classList.contains('is-active'); })[0];
+                applyMarket(button.getAttribute('data-region'), selected);
+            });
+        });
+        applyMarket(region, null);
+        var cta = document.getElementById('cl-calc-cta');
+        if (cta) {
+            cta.addEventListener('click', function (event) {
+                var message = document.getElementById('landing-message');
+                var target = document.getElementById('contacto');
+                if (!message || !target) {
+                    return;
+                }
+                event.preventDefault();
+                var estimate = calc.getAttribute('data-estimate-prefix') + ' ' + latest.month + ' ' + calc.getAttribute('data-and') + ' ' + latest.year + ' (' + latest.detail + ').';
+                if (!message.value.trim() || message.value === message.getAttribute('data-last-estimate')) {
+                    message.value = estimate;
+                    message.setAttribute('data-last-estimate', estimate);
+                }
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                window.setTimeout(function () {
+                    message.focus({ preventScroll: true });
+                }, 450);
+            });
+        }
         render();
     }
 

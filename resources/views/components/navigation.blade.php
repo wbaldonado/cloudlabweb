@@ -13,7 +13,6 @@
             <li><a href="{{ route('home') }}" class="cl-nav-link {{ request()->routeIs('home') ? 'is-active' : '' }}">{{ __('messages.nav.home') }}</a></li>
             <li><a href="{{ route('services.index') }}" class="cl-nav-link {{ request()->routeIs('services.*') ? 'is-active' : '' }}">{{ __('messages.nav.services') }}</a></li>
             <li><a href="{{ route('about.index') }}" class="cl-nav-link {{ request()->routeIs('about.*') ? 'is-active' : '' }}">{{ __('messages.nav.about') }}</a></li>
-            <li><a href="{{ route('public.technologies.index') }}" class="cl-nav-link {{ request()->routeIs('public.technologies.index') ? 'is-active' : '' }}">{{ __('messages.nav.technologies') }}</a></li>
             <li><a href="{{ route('projects.index') }}" class="cl-nav-link {{ request()->routeIs('projects.*') ? 'is-active' : '' }}">{{ __('messages.nav.projects') }}</a></li>
             <li><a href="{{ route('blogs.index') }}" class="cl-nav-link {{ request()->routeIs('blogs.*') ? 'is-active' : '' }}">{{ __('messages.nav.blog') }}</a></li>
         </ul>
@@ -34,7 +33,6 @@
         <a href="{{ route('home') }}" class="cl-mobile-link">{{ __('messages.nav.home') }}</a>
         <a href="{{ route('services.index') }}" class="cl-mobile-link">{{ __('messages.nav.services') }}</a>
         <a href="{{ route('about.index') }}" class="cl-mobile-link">{{ __('messages.nav.about') }}</a>
-        <a href="{{ route('public.technologies.index') }}" class="cl-mobile-link">{{ __('messages.nav.technologies') }}</a>
         <a href="{{ route('projects.index') }}" class="cl-mobile-link">{{ __('messages.nav.projects') }}</a>
         <a href="{{ route('blogs.index') }}" class="cl-mobile-link">{{ __('messages.nav.blog') }}</a>
         <div class="cl-lang-toggle mt-3">

@@ -1804,10 +1804,18 @@ a.cloud-bot__action.is-primary {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
 }
+.cl-offer-card {
+    display: flex;
+    flex-direction: column;
+}
 .cl-offer-card ul {
     margin: 0.75rem 0 1rem;
     padding-left: 1.1rem;
+    color: var(--cl-text);
 }
+.cl-offer-card .cl-link-read { margin-top: auto; }
+html { scroll-padding-top: 6rem; }
+.cl-section, #contacto { scroll-margin-top: 6rem; }
 .cl-proof {
     background: #fff;
     border-left: 4px solid var(--brand-cyan, #00e5ff);
@@ -1818,35 +1826,129 @@ a.cloud-bot__action.is-primary {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
     gap: 1.5rem;
-    align-items: center;
+    align-items: stretch;
     background: #fff;
     border: 1px solid rgba(0, 168, 197, 0.28);
     border-top: 3px solid var(--brand-cyan-dark);
     border-radius: 16px;
     padding: 1.25rem 1.5rem 1.5rem;
 }
-.cl-calc-controls label {
+.cl-calc-regions,
+.cl-calc-presets {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+.cl-calc-regions { margin-bottom: 0.75rem; }
+.cl-calc-regions button,
+.cl-calc-presets button {
+    border: 1px solid rgba(0, 168, 197, 0.35);
+    background: #fff;
+    color: var(--brand-ink);
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-weight: 600;
+    font-size: 0.86rem;
+    cursor: pointer;
+}
+.cl-calc-regions button.is-active,
+.cl-calc-presets button.is-active {
+    background: #0F172A;
+    color: #fff;
+    border-color: #0F172A;
+}
+.cl-calc-controls label {
+    display: block;
     font-weight: 600;
     margin-top: 0.85rem;
 }
-.cl-calc-controls input[type="range"] {
+.cl-range {
+    position: relative;
+    margin-top: 0.15rem;
+    padding-top: 2.15rem;
+}
+.cl-range input[type="range"] {
+    display: block;
     width: 100%;
+    height: 1.25rem;
+    margin: 0;
+    accent-color: #00a8c5;
+}
+.cl-pill {
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    background: #d9f8ff;
+    color: #0a6d80;
+    border-radius: 999px;
+    padding: 0.12rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+}
+.cl-calc-results {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.85rem;
+    background: #0F172A;
+    color: #fff;
+    border-radius: 16px;
+    padding: 1.35rem 1.25rem 1.25rem;
 }
 .cl-calc-results p {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 1rem;
-    margin: 0 0 0.75rem;
-    font-size: 1.05rem;
-    color: var(--brand-ink);
+    display: block;
+    margin: 0;
 }
-.cl-calc-results strong {
-    color: var(--brand-cyan-ink);
-    font-size: 1.45rem;
+.cl-calc-results span {
+    display: block;
+    color: #9cc3cf;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+.cl-calc-hours strong {
+    color: #7ef9ff;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.cl-calc-money strong {
+    display: block;
+    color: #fff;
+    font-size: clamp(1.7rem, 2.8vw, 3rem);
     font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+.cl-calc.is-cop .cl-calc-money strong {
+    font-size: clamp(1.45rem, 2.3vw, 2.15rem);
+}
+.cl-calc-equiv {
+    margin: 0;
+    color: #7ef9ff;
+    font-size: 0.92rem;
+    font-weight: 700;
+}
+.cl-calc-equiv[hidden] { display: none; }
+.cl-calc-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.35rem;
+    background: #00e5ff;
+    color: #0F172A;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 0.75rem 1rem;
+}
+.cl-calc-cta:hover {
+    background: #fff;
+    color: #0F172A;
 }
 .cl-calc-note,
 .cl-field-error {
@@ -1881,6 +1983,14 @@ a.cloud-bot__action.is-primary {
     padding: 1.5rem;
 }
 .cl-contact-narrow { max-width: 720px; }
+.cl-work-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+.cl-work-split .cl-section-subtitle { margin-bottom: 1.25rem; }
+.cl-work-split .cl-landing-form { margin-top: 0.25rem; }
 .cl-hp {
     position: absolute !important;
     left: -10000px !important;
@@ -1929,7 +2039,8 @@ a.cloud-bot__action.is-primary {
 }
 @media (max-width: 991px) {
     .cl-offer-grid,
-    .cl-calc { grid-template-columns: 1fr; }
+    .cl-calc,
+    .cl-work-split { grid-template-columns: 1fr; }
 }
 
 /* Tailwind preflight sets .collapse { visibility: collapse }, which hides Bootstrap accordion answers. */

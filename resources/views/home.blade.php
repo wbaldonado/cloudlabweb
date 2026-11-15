@@ -32,9 +32,9 @@
             <h2 class="cl-section-title">{{ __('messages.landing.services_title') }}</h2>
             <p class="cl-section-subtitle">{{ __('messages.landing.services_intro') }}</p>
             <div class="cl-offer-grid">
-                <article class="cl-offer-card cl-offer-card--lg">
-                    <h3>{{ __('messages.landing.auto_title') }}</h3>
-                    <p>{{ __('messages.landing.auto_text') }}</p>
+                <article class="cl-offer-card">
+                    <h3>{{ __('messages.landing.pillar_automate_title') }}</h3>
+                    <p>{{ __('messages.landing.pillar_automate_text') }}</p>
                     <ul>
                         <li>{{ __('messages.landing.auto_item_1') }}</li>
                         <li>{{ __('messages.landing.auto_item_2') }}</li>
@@ -43,52 +43,129 @@
                     <a href="{{ route('services.show', ['slug' => 'automatizacion-power-automate']) }}" class="cl-link-read">{{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i></a>
                 </article>
                 <article class="cl-offer-card">
-                    <h3>{{ __('messages.landing.bi_title') }}</h3>
-                    <p>{{ __('messages.landing.bi_text') }}</p>
-                    <a href="{{ route('services.show', ['slug' => 'power-bi-analitica']) }}" class="cl-link-read">{{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i></a>
-                </article>
-                <article class="cl-offer-card">
-                    <h3>{{ __('messages.landing.data_title') }}</h3>
-                    <p>{{ __('messages.landing.data_text') }}</p>
+                    <h3>{{ __('messages.landing.pillar_data_title') }}</h3>
+                    <p>{{ __('messages.landing.pillar_data_text') }}</p>
+                    <ul>
+                        <li>{{ __('messages.landing.pillar_data_item_1') }}</li>
+                        <li>{{ __('messages.landing.pillar_data_item_2') }}</li>
+                        <li>{{ __('messages.landing.pillar_data_item_3') }}</li>
+                    </ul>
                     <a href="{{ route('services.show', ['slug' => 'microsoft-fabric-ingenieria-de-datos']) }}" class="cl-link-read">{{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i></a>
                 </article>
                 <article class="cl-offer-card">
-                    <h3>{{ __('messages.landing.apps_title') }}</h3>
-                    <p>{{ __('messages.landing.apps_text') }}</p>
-                    <a href="{{ route('projects.show', ['slug' => 'caso-de-exito-solucion-para-la-gestion-integral-de-un-taller-de-motocicletas']) }}" class="cl-link-read">{{ __('messages.landing.see_case') }} <i class="bi bi-arrow-right"></i></a>
-                </article>
-                <article class="cl-offer-card cl-offer-card--lg">
-                    <h3>{{ __('messages.landing.ai_title') }}</h3>
-                    <p>{{ __('messages.landing.ai_text') }}</p>
+                    <h3>{{ __('messages.landing.pillar_ai_title') }}</h3>
+                    <p>{{ __('messages.landing.pillar_ai_text') }}</p>
+                    <ul>
+                        <li>{{ __('messages.landing.pillar_ai_item_1') }}</li>
+                        <li>{{ __('messages.landing.pillar_ai_item_2') }}</li>
+                        <li>{{ __('messages.landing.pillar_ai_item_3') }}</li>
+                    </ul>
                     <a href="#contacto" class="cl-link-read">{{ __('messages.landing.talk') }} <i class="bi bi-arrow-right"></i></a>
                 </article>
             </div>
         </div>
     </section>
 
-    <section class="cl-section cl-section--white" id="calculadora" data-landing data-locale="{{ app()->getLocale() }}">
+    <section class="cl-section" id="calculadora" data-landing data-locale="{{ app()->getLocale() }}">
         <div class="container">
             <h2 class="cl-section-title">{{ __('messages.landing.calc_title') }}</h2>
-            <div class="cl-calc">
+            <div class="cl-calc"
+                data-unit-person="{{ __('messages.landing.calc_unit_person') }}"
+                data-unit-people="{{ __('messages.landing.calc_unit_people') }}"
+                data-unit-hours="{{ __('messages.landing.calc_unit_hours') }}"
+                data-unit-rate="{{ __('messages.landing.calc_unit_rate') }}"
+                data-unit-month="{{ __('messages.landing.calc_unit_month') }}"
+                data-unit-year="{{ __('messages.landing.calc_unit_year') }}"
+                data-estimate-prefix="{{ __('messages.landing.calc_estimate_prefix') }}"
+                data-and="{{ __('messages.landing.calc_and') }}"
+                data-rate-label-usd="{{ __('messages.landing.calc_rate_usd') }}"
+                data-rate-label-cop="{{ __('messages.landing.calc_rate_cop') }}"
+                data-year-label-usd="{{ __('messages.landing.calc_year_usd') }}"
+                data-year-label-cop="{{ __('messages.landing.calc_year_cop') }}"
+                data-region-name-usd="{{ __('messages.landing.calc_region_usd') }}"
+                data-region-name-cop="{{ __('messages.landing.calc_region_cop') }}"
+                data-equiv="{{ __('messages.landing.calc_equiv') }}">
                 <div class="cl-calc-controls">
-                    <label for="cl-people">{{ __('messages.landing.calc_people') }} <output id="cl-people-out">5</output></label>
-                    <input id="cl-people" type="range" min="1" max="50" value="5">
-                    <label for="cl-hours">{{ __('messages.landing.calc_hours') }} <output id="cl-hours-out">6</output></label>
-                    <input id="cl-hours" type="range" min="1" max="30" value="6">
-                    <label for="cl-rate">{{ __('messages.landing.calc_rate') }} <output id="cl-rate-out">12</output></label>
-                    <input id="cl-rate" type="range" min="3" max="60" value="12">
+                    <div class="cl-calc-regions" role="radiogroup" aria-label="{{ __('messages.landing.calc_region_label') }}">
+                        <button type="button" role="radio" data-region="usd" aria-checked="false">{{ __('messages.landing.calc_region_usd') }}</button>
+                        <button type="button" role="radio" data-region="cop" aria-checked="false">{{ __('messages.landing.calc_region_cop') }}</button>
+                    </div>
+                    <div class="cl-calc-presets" role="group" aria-label="{{ __('messages.landing.calc_title') }}">
+                        <button type="button" data-preset data-people="6" data-hours="10" data-rate-usd="32" data-rate-cop="35000" aria-pressed="false">{{ __('messages.landing.calc_preset_finance') }}</button>
+                        <button type="button" data-preset data-people="8" data-hours="6" data-rate-usd="28" data-rate-cop="28000" aria-pressed="false">{{ __('messages.landing.calc_preset_sales') }}</button>
+                        <button type="button" data-preset data-people="12" data-hours="8" data-rate-usd="22" data-rate-cop="18000" aria-pressed="false">{{ __('messages.landing.calc_preset_support') }}</button>
+                    </div>
+                    <label for="cl-people">{{ __('messages.landing.calc_people') }}</label>
+                    <div class="cl-range">
+                        <output class="cl-pill" id="cl-people-out" for="cl-people">8</output>
+                        <input id="cl-people" type="range" min="1" max="50" value="8">
+                    </div>
+                    <label for="cl-hours">{{ __('messages.landing.calc_hours') }}</label>
+                    <div class="cl-range">
+                        <output class="cl-pill" id="cl-hours-out" for="cl-hours">8</output>
+                        <input id="cl-hours" type="range" min="1" max="30" value="8">
+                    </div>
+                    <label id="cl-rate-label" for="cl-rate">{{ __('messages.landing.calc_rate_usd') }}</label>
+                    <div class="cl-range">
+                        <output class="cl-pill" id="cl-rate-out" for="cl-rate">25</output>
+                        <input id="cl-rate" type="range" min="8" max="80" step="1" value="25">
+                    </div>
                 </div>
                 <div class="cl-calc-results" aria-live="polite">
-                    <p><span>{{ __('messages.landing.calc_month') }}</span> <strong id="cl-month">0</strong></p>
-                    <p><span>{{ __('messages.landing.calc_year') }}</span> <strong id="cl-year">0</strong></p>
+                    <p class="cl-calc-hours"><span>{{ __('messages.landing.calc_month') }}</span> <strong id="cl-month">0</strong></p>
+                    <p class="cl-calc-money"><span id="cl-year-label">{{ __('messages.landing.calc_year_usd') }}</span> <strong id="cl-year">0</strong></p>
+                    <p class="cl-calc-equiv" id="cl-equiv" hidden></p>
+                    <a href="#contacto" class="cl-calc-cta" id="cl-calc-cta">{{ __('messages.landing.calc_cta') }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 </div>
             </div>
             <p class="cl-calc-note">{{ __('messages.landing.calc_note') }}</p>
         </div>
     </section>
 
-    <section class="cl-section" id="proceso">
+    <section class="cl-section cl-section--white" id="casos">
         <div class="container">
+            <div class="cl-section-header">
+                <div>
+                    <h2 class="cl-section-title mb-1">{{ __('messages.home.featured_projects') }}</h2>
+                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.featured_projects_subtitle') }}</p>
+                </div>
+                <a href="{{ route('projects.index') }}" class="cl-section-link">{{ __('messages.home.view_all') }} →</a>
+            </div>
+            <aside class="cl-proof mb-4">
+                <h3>{{ __('messages.landing.proof_title') }}</h3>
+                <p class="mb-0">{{ __('messages.landing.proof_text') }}</p>
+            </aside>
+            @if(isset($featuredProjects) && $featuredProjects->count() > 0)
+                <div class="row g-4">
+                    @foreach($featuredProjects as $project)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="cl-card cl-glow-card cl-card--media">
+                                @if($project->image_url)
+                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-card-media-link">
+                                        <img src="{{ $project->image_url }}" class="cl-card-media" alt="{{ $project->translated('title') }}" width="640" height="360">
+                                    </a>
+                                @endif
+                                <div class="cl-card-body">
+                                    <span class="cl-badge">{{ __('messages.home.badge_project') }}</span>
+                                    <h5>{{ $project->translated('title') }}</h5>
+                                    <p>{{ \Illuminate\Support\Str::limit($project->translated('description') ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-link-read">
+                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="cl-empty">{{ __('messages.home.no_projects') }}</div>
+            @endif
+        </div>
+    </section>
+
+    <section class="cl-section" id="proceso">
+        <div class="container cl-work-split">
+            <div>
             <h2 class="cl-section-title">{{ __('messages.landing.process_title') }}</h2>
             <div class="cl-steps" data-steps>
                 <div class="cl-step-tabs" role="tablist">
@@ -114,11 +191,8 @@
                     <p>{{ __('messages.landing.step_4_text') }}</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="cl-section cl-section--white" id="contacto">
-        <div class="container cl-contact-narrow">
+            </div>
+            <div id="contacto">
             <h2 class="cl-section-title">{{ __('messages.landing.contact_title') }}</h2>
             <p class="cl-section-subtitle">{{ __('messages.landing.contact_lead') }}</p>
             @if(session('success'))
@@ -158,6 +232,44 @@
                 @include('components.turnstile-widget')
                 <button type="submit" class="cl-btn-solid">{{ __('messages.landing.schedule') }}</button>
             </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="cl-section cl-section--white" id="blog">
+        <div class="container">
+            <div class="cl-section-header">
+                <div>
+                    <h2 class="cl-section-title mb-1">{{ __('messages.home.latest_blog') }}</h2>
+                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.latest_blog_subtitle') }}</p>
+                </div>
+                <a href="{{ route('blogs.index') }}" class="cl-section-link">{{ __('messages.home.view_all_posts') }} →</a>
+            </div>
+            @if(isset($recentBlogs) && $recentBlogs->count() > 0)
+                <div class="row g-4">
+                    @foreach($recentBlogs as $blog)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="cl-card cl-glow-card cl-card--media">
+                                @if($blog->featured_image_url)
+                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-card-media-link">
+                                        <img src="{{ $blog->featured_image_url }}" class="cl-card-media" alt="{{ $blog->title }}" width="640" height="360">
+                                    </a>
+                                @endif
+                                <div class="cl-card-body">
+                                    <span class="cl-badge">{{ __('messages.home.badge_blog') }}</span>
+                                    <h5>{{ $blog->title }}</h5>
+                                    <p>{{ \Illuminate\Support\Str::limit($blog->excerpt ?: __('messages.home.card_placeholder'), 120) }}</p>
+                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-link-read">
+                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="cl-empty">{{ __('messages.home.no_blog') }}</div>
+            @endif
         </div>
     </section>
 
@@ -263,80 +375,6 @@
                     </article>
                 @endforeach
             </div>
-        </div>
-    </section>
-
-    <section class="cl-section cl-section--white">
-        <div class="container">
-            <div class="cl-section-header">
-                <div>
-                    <h2 class="cl-section-title mb-1">{{ __('messages.home.latest_blog') }}</h2>
-                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.latest_blog_subtitle') }}</p>
-                </div>
-                <a href="{{ route('blogs.index') }}" class="cl-section-link">{{ __('messages.home.view_all_posts') }} →</a>
-            </div>
-            @if(isset($recentBlogs) && $recentBlogs->count() > 0)
-                <div class="row g-4">
-                    @foreach($recentBlogs as $blog)
-                        <div class="col-md-6 col-lg-4">
-                            <article class="cl-card cl-glow-card cl-card--media">
-                                @if($blog->featured_image_url)
-                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-card-media-link">
-                                        <img src="{{ $blog->featured_image_url }}" class="cl-card-media" alt="{{ $blog->title }}" width="640" height="360">
-                                    </a>
-                                @endif
-                                <div class="cl-card-body">
-                                    <span class="cl-badge">{{ __('messages.home.badge_blog') }}</span>
-                                    <h5>{{ $blog->title }}</h5>
-                                    <p>{{ \Illuminate\Support\Str::limit($blog->excerpt ?: __('messages.home.card_placeholder'), 120) }}</p>
-                                    <a href="{{ route('blogs.show', ['slug' => $blog->slug]) }}" class="cl-link-read">
-                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="cl-empty">{{ __('messages.home.no_blog') }}</div>
-            @endif
-        </div>
-    </section>
-
-    <section class="cl-section pb-5">
-        <div class="container">
-            <div class="cl-section-header">
-                <div>
-                    <h2 class="cl-section-title mb-1">{{ __('messages.home.featured_projects') }}</h2>
-                    <p class="cl-section-subtitle mb-0">{{ __('messages.home.featured_projects_subtitle') }}</p>
-                </div>
-                <a href="{{ route('projects.index') }}" class="cl-section-link">{{ __('messages.home.view_all') }} →</a>
-            </div>
-            @if(isset($featuredProjects) && $featuredProjects->count() > 0)
-                <div class="row g-4">
-                    @foreach($featuredProjects as $project)
-                        <div class="col-md-6 col-lg-4">
-                            <article class="cl-card cl-glow-card cl-card--media">
-                                @if($project->image_url)
-                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-card-media-link">
-                                        <img src="{{ $project->image_url }}" class="cl-card-media" alt="{{ $project->translated('title') }}" width="640" height="360">
-                                    </a>
-                                @endif
-                                <div class="cl-card-body">
-                                    <span class="cl-badge">{{ __('messages.home.badge_project') }}</span>
-                                    <h5>{{ $project->translated('title') }}</h5>
-                                    <p>{{ \Illuminate\Support\Str::limit($project->translated('description') ?: __('messages.home.card_placeholder'), 120) }}</p>
-                                    <a href="{{ route('projects.show', ['slug' => $project->slug]) }}" class="cl-link-read">
-                                        {{ __('messages.blog.read_more') }} <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            </article>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="cl-empty">{{ __('messages.home.no_projects') }}</div>
-            @endif
         </div>
     </section>
 </div>
