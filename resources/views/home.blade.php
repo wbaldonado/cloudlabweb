@@ -12,6 +12,7 @@
         <div class="container">
             <div class="cl-hero-grid">
                 <div class="cl-hero-copy">
+                    <p class="cl-hero-eyebrow">{{ __('messages.landing.eyebrow') }}</p>
                     <h1>{{ __('messages.home.welcome') }}</h1>
                     <p class="cl-hero-lead">{{ __('messages.home.subtitle') }}</p>
                     <div class="cl-hero-actions">
@@ -33,6 +34,16 @@
             <p class="cl-section-subtitle">{{ __('messages.landing.services_intro') }}</p>
             <div class="cl-offer-grid">
                 <article class="cl-offer-card">
+                    <h3>{{ __('messages.landing.pillar_ai_title') }}</h3>
+                    <p>{{ __('messages.landing.pillar_ai_text') }}</p>
+                    <ul>
+                        <li>{{ __('messages.landing.pillar_ai_item_1') }}</li>
+                        <li>{{ __('messages.landing.pillar_ai_item_2') }}</li>
+                        <li>{{ __('messages.landing.pillar_ai_item_3') }}</li>
+                    </ul>
+                    <a href="{{ route('services.show', ['slug' => 'agentes-de-ia']) }}" class="cl-link-read">{{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i></a>
+                </article>
+                <article class="cl-offer-card">
                     <h3>{{ __('messages.landing.pillar_automate_title') }}</h3>
                     <p>{{ __('messages.landing.pillar_automate_text') }}</p>
                     <ul>
@@ -51,16 +62,6 @@
                         <li>{{ __('messages.landing.pillar_data_item_3') }}</li>
                     </ul>
                     <a href="{{ route('services.show', ['slug' => 'microsoft-fabric-ingenieria-de-datos']) }}" class="cl-link-read">{{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i></a>
-                </article>
-                <article class="cl-offer-card">
-                    <h3>{{ __('messages.landing.pillar_ai_title') }}</h3>
-                    <p>{{ __('messages.landing.pillar_ai_text') }}</p>
-                    <ul>
-                        <li>{{ __('messages.landing.pillar_ai_item_1') }}</li>
-                        <li>{{ __('messages.landing.pillar_ai_item_2') }}</li>
-                        <li>{{ __('messages.landing.pillar_ai_item_3') }}</li>
-                    </ul>
-                    <a href="#contacto" class="cl-link-read">{{ __('messages.landing.talk') }} <i class="bi bi-arrow-right"></i></a>
                 </article>
             </div>
         </div>
@@ -131,10 +132,17 @@
                 </div>
                 <a href="{{ route('projects.index') }}" class="cl-section-link">{{ __('messages.home.view_all') }} →</a>
             </div>
-            <aside class="cl-proof mb-4">
-                <h3>{{ __('messages.landing.proof_title') }}</h3>
-                <p class="mb-0">{{ __('messages.landing.proof_text') }}</p>
-            </aside>
+            <div class="cl-proof-grid mb-4">
+                <aside class="cl-agent-sample" aria-label="{{ __('messages.landing.agent_sample_label') }}">
+                    <p class="cl-agent-sample__label">{{ __('messages.landing.agent_sample_label') }}</p>
+                    <p class="cl-agent-sample__q"><span>{{ __('messages.landing.agent_sample_who') }}</span> {{ __('messages.landing.agent_sample_question') }}</p>
+                    <p class="cl-agent-sample__a"><span>{{ __('messages.landing.agent_sample_bot') }}</span> {{ __('messages.landing.agent_sample_answer') }}</p>
+                </aside>
+                <aside class="cl-proof">
+                    <h3>{{ __('messages.landing.proof_title') }}</h3>
+                    <p class="mb-0">{{ __('messages.landing.proof_text') }}</p>
+                </aside>
+            </div>
             @if(isset($featuredProjects) && $featuredProjects->count() > 0)
                 <div class="row g-4">
                     @foreach($featuredProjects as $project)
@@ -226,7 +234,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="landing-message">{{ __('messages.landing.contact_process') }}</label>
-                    <textarea id="landing-message" name="message" rows="4" required maxlength="5000">{{ old('message') }}</textarea>
+                    <textarea id="landing-message" name="message" rows="4" required maxlength="5000" placeholder="{{ __('messages.landing.contact_placeholder') }}">{{ old('message') }}</textarea>
                     @error('message')<p class="cl-field-error">{{ $message }}</p>@enderror
                 </div>
                 @include('components.turnstile-widget')
@@ -245,8 +253,20 @@
                 </div>
                 <a href="{{ route('blogs.index') }}" class="cl-section-link">{{ __('messages.home.view_all_posts') }} →</a>
             </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <article class="cl-card cl-glow-card h-100">
+                        <div class="cl-card-body">
+                            <span class="cl-badge">{{ __('messages.home.agent_guide_badge') }}</span>
+                            <h5>{{ __('messages.home.agent_guide_title') }}</h5>
+                            <p>{{ __('messages.home.agent_guide_text') }}</p>
+                            <a href="{{ route('services.show', ['slug' => 'agentes-de-ia']) }}" class="cl-link-read">
+                                {{ __('messages.landing.see_service') }} <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </article>
+                </div>
             @if(isset($recentBlogs) && $recentBlogs->count() > 0)
-                <div class="row g-4">
                     @foreach($recentBlogs as $blog)
                         <div class="col-md-6 col-lg-4">
                             <article class="cl-card cl-glow-card cl-card--media">
@@ -266,10 +286,8 @@
                             </article>
                         </div>
                     @endforeach
-                </div>
-            @else
-                <div class="cl-empty">{{ __('messages.home.no_blog') }}</div>
             @endif
+            </div>
         </div>
     </section>
 

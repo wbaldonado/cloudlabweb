@@ -3373,6 +3373,7 @@
                         ])
                         <h5>CloudLab Latam</h5>
                     </div>
+                    <p class="footer-claim">{{ __('messages.landing.eyebrow') }}</p>
                     <p style="color: #cbd5e0; line-height: 1.6;">
                         {{ __('messages.footer.description') }}
                     </p>

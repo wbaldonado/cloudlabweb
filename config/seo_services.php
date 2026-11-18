@@ -14,6 +14,57 @@ $faq = static function (array $pairs): array {
 return [
     'pages' => [
         [
+            'slug' => 'agentes-de-ia',
+            'icon' => 'bi-stars',
+            'keywords' => ['Copilot Studio', 'agente de IA'],
+            'es' => [
+                'nav' => 'Agentes de IA',
+                'h1' => 'Agentes de IA sobre los datos de tu operación',
+                'excerpt' => 'Un agente que responde y actúa con la información que la empresa ya tiene, en Copilot Studio o Python.',
+                'meta_title' => 'Agentes de IA para tu operación | CloudLab Latam',
+                'meta_description' => 'Un agente de IA que responde y actúa con los datos de tu empresa, en Copilot Studio o Python. Pide una consulta gratuita.',
+                'paragraphs' => [
+                    'CloudLab Latam entrega un agente de IA que responde y actúa sobre los procesos y los datos de la empresa. El servicio usa Copilot Studio cuando la operación ya vive en Microsoft, y Python cuando la lógica necesita un modelo a medida. El entregable no es una demo suelta: es un agente con una fuente de datos, un dueño, un límite claro de lo que puede decir y una forma de pasarle el caso a una persona cuando no alcanza.',
+                    'El trabajo empieza por la decisión, no por el modelo. En las primeras sesiones se elige la pregunta que el equipo hace todos los días: el estado de una factura, la regla de una comisión, el siguiente paso de un pedido. Si esa pregunta no tiene un dato confiable detrás, el agente no se construye todavía. Primero se deja la fuente en orden, con Power BI o Microsoft Fabric, y después el agente lee esa fuente.',
+                    'El agente usa la información que la empresa ya reconoce. Puede leer un modelo de Fabric, registros de Dataverse, documentos acordados o el resultado de un flujo de Power Automate. No se arma una segunda base para que el agente tenga algo que decir. Cuando la fuente no trae el dato, el agente lo dice y no completa el hueco con una suposición.',
+                    'Copilot Studio conviene cuando el agente debe conversar dentro del ecosistema Microsoft y apoyarse en conectores que la empresa ya administra. Python conviene cuando el cálculo, la clasificación o el modelo predictivo no caben en un asistente empaquetado. Los dos pueden convivir: el agente conversa y, si la decisión implica un paso en otro sistema, Power Automate o RPA ejecutan ese paso. El agente propone y registra; la acción queda en el flujo que ya tiene dueño.',
+                    'Hay límites que se escriben antes de construir. El agente no aprueba un pago por su cuenta, no inventa una cifra que no está en la fuente y no esconde de dónde salió la respuesta. Las pruebas recorren la pregunta bien hecha y la pregunta cuya respuesta no existe. El equipo de negocio participa porque reconoce cuándo una respuesta suena correcta y no lo es.',
+                    'La medición es parte de la entrega. Se deja visible cuántas preguntas resolvió el agente, cuántas pasó a una persona y qué tiempo de ciclo cambió. Esos números pueden verse junto al resto de la operación, incluso en Power BI. Sin esa cuenta, el agente se vuelve una ventana más y es difícil decidir el siguiente proceso.',
+                    'También queda el gobierno mínimo: quién puede cambiar las fuentes, quién puede ampliar lo que el agente responde y cómo se pide un ajuste. Las credenciales no viven en una cuenta personal. El equipo interno recorre un caso de punta a punta y queda más de una persona capaz de operarlo. CloudLab Latam acompaña los primeros ajustes y deja la guía para que el agente no dependa de un solo consultor.',
+                    'Un primer agente, acotado a una decisión y a una fuente estable, suele entregarse en dos a cuatro semanas, sin permanencia mínima. Si quieres ver cuál decisión de tu operación puede tomar un agente, pide una consulta gratuita y revisamos un caso concreto.',
+                ],
+                'faqs' => $faq([
+                    ['¿El agente reemplaza al equipo?', 'No. Quita la búsqueda repetida y el paso mecánico. La excepción y la decisión irreversible siguen en una persona.'],
+                    ['¿Qué datos necesita?', 'Una fuente que el negocio ya considera válida: Fabric, Dataverse, un documento acordado o el resultado de un flujo. Si esa fuente no existe, se ordena antes de construir el agente.'],
+                    ['¿Copilot Studio o Python?', 'Copilot Studio cuando el agente conversa dentro de Microsoft. Python cuando hace falta un modelo a medida. Muchos casos usan los dos, con Power Automate para la acción.'],
+                    ['¿En cuánto tiempo se ve un primer agente?', 'Una decisión acotada, con la fuente lista, suele diseñarse e implementarse en dos a cuatro semanas.'],
+                ]),
+            ],
+            'en' => [
+                'nav' => 'AI agents',
+                'h1' => 'AI agents on your operation’s data',
+                'excerpt' => 'An agent that answers and acts on information the company already has, in Copilot Studio or Python.',
+                'meta_title' => 'AI Agents for Your Operation | CloudLab Latam',
+                'meta_description' => 'An AI agent that answers and acts on your company data, in Copilot Studio or Python. Request a free consultation.',
+                'paragraphs' => [
+                    'CloudLab Latam delivers an AI agent that answers and acts on the company’s processes and data. The service uses Copilot Studio when the operation already lives in Microsoft, and Python when the logic needs a custom model. The deliverable is not a loose demo. It is an agent with a data source, an owner, a clear limit on what it may say, and a way to hand the case to a person when it cannot finish.',
+                    'Work starts with the decision, not the model. In the first sessions we choose the question the team asks every day: the status of an invoice, the rule for a commission, the next step of an order. If that question has no reliable data behind it, the agent is not built yet. The source is put in order first, with Power BI or Microsoft Fabric, and then the agent reads that source.',
+                    'The agent uses information the company already trusts. It can read a Fabric model, Dataverse records, agreed documents, or the result of a Power Automate flow. A second database is not created so the agent has something to say. When the source does not contain the fact, the agent says so and does not fill the gap with a guess.',
+                    'Copilot Studio fits when the agent should talk inside the Microsoft estate and use connectors the company already administers. Python fits when the calculation, the classification, or the predictive model does not fit a packaged assistant. The two can work together: the agent talks and, if the decision needs a step in another system, Power Automate or RPA carry out that step. The agent proposes and records; the action stays in the flow that already has an owner.',
+                    'The limits are written before the build. The agent does not approve a payment on its own, does not invent a figure that is not in the source, and does not hide where the answer came from. Testing covers the well-formed question and the question whose answer does not exist. The business team joins that test because they recognize when an answer sounds right and is not.',
+                    'Measurement is part of delivery. We leave visible how many questions the agent resolved, how many it handed to a person, and what cycle time changed. Those numbers can sit with the rest of the operation, including in Power BI. Without that count, the agent becomes another window and the next process is hard to justify.',
+                    'A minimum governance model stays too: who can change the sources, who can widen what the agent answers, and how an adjustment is requested. Credentials do not live in a personal account. The internal team walks through one case from start to finish, and more than one person is able to operate it. CloudLab Latam supports the first adjustments and leaves the guide so the agent does not depend on a single consultant.',
+                    'A first agent, bounded to one decision and one stable source, is usually delivered in two to four weeks, with no minimum term. If you want to see which decision in your operation an agent can take, request a free consultation and we will review one concrete case.',
+                ],
+                'faqs' => $faq([
+                    ['Does the agent replace the team?', 'No. It removes the repeated lookup and the mechanical step. The exception and the irreversible decision stay with a person.'],
+                    ['What data does it need?', 'A source the business already treats as valid: Fabric, Dataverse, an agreed document, or the result of a flow. If that source does not exist, it is put in order before the agent is built.'],
+                    ['Copilot Studio or Python?', 'Copilot Studio when the agent talks inside Microsoft. Python when a custom model is required. Many cases use both, with Power Automate for the action.'],
+                    ['How soon is a first agent visible?', 'A bounded decision, with the source ready, is usually designed and implemented in two to four weeks.'],
+                ]),
+            ],
+        ],
+        [
             'slug' => 'automatizacion-power-automate',
             'icon' => 'bi-lightning-charge-fill',
             'keywords' => ['Power Automate', 'Power Platform'],

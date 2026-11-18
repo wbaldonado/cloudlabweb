@@ -16,14 +16,14 @@ class SEOService
         
         return [
             'title' => $locale === 'es'
-                ? 'CloudLab Latam | Power Automate, Power BI y Microsoft Fabric'
-                : 'CloudLab Latam | Power Automate, Power BI and Microsoft Fabric',
+                ? 'CloudLab Latam | Agentes de IA, Power Automate y Power BI'
+                : 'CloudLab Latam | AI Agents, Power Automate and Power BI',
             'description' => $locale === 'es'
-                ? 'Automatizamos procesos con Power Automate, analítica en Power BI e ingeniería de datos con Microsoft Fabric para tu empresa. Solicita hoy una consulta gratuita.'
-                : 'We automate business processes with Power Automate, analytics in Power BI and data engineering on Microsoft Fabric. Request your free consultation today.',
+                ? 'Ponemos agentes de IA a trabajar sobre tus procesos y datos, con Power Automate, Power BI y Microsoft Fabric. Solicita hoy una consulta gratuita.'
+                : 'We put AI agents to work on your processes and data, with Power Automate, Power BI, and Microsoft Fabric. Request your free consultation today.',
             'keywords' => $locale === 'es'
-                ? 'automatización en la nube, transformación digital, cloud automation, inteligencia artificial, IA, procesos empresariales, América Latina, Latam, eficiencia operacional, trabajo colaborativo'
-                : 'cloud automation, digital transformation, artificial intelligence, AI, business processes, Latin America, Latam, operational efficiency, collaborative work',
+                ? 'agentes de IA, inteligencia artificial, Copilot Studio, automatización en la nube, Power Automate, Power BI, Microsoft Fabric, América Latina'
+                : 'AI agents, artificial intelligence, Copilot Studio, cloud automation, Power Automate, Power BI, Microsoft Fabric, Latin America',
             'author' => 'CloudLab Latam',
             'og_type' => 'website',
             'og_site_name' => 'CloudLab Latam',
@@ -174,11 +174,11 @@ class SEOService
             case 'services_index':
                 return array_merge($default, [
                     'title' => $locale === 'es'
-                        ? 'Servicios de Power Platform | CloudLab Latam'
-                        : 'Power Platform Services | CloudLab Latam',
+                        ? 'Agentes de IA y Power Platform | CloudLab Latam'
+                        : 'AI Agents and Power Platform | CloudLab Latam',
                     'description' => $locale === 'es'
-                        ? 'Servicios de Power Automate, Power BI, Microsoft Fabric y RPA para automatizar procesos y ordenar tus datos. Pide una consulta gratuita.'
-                        : 'Power Automate, Power BI, Microsoft Fabric, and RPA services to automate processes and organize your data. Request a free consultation.',
+                        ? 'Agentes de IA, Power Automate, Power BI, Microsoft Fabric y RPA para que la operación responda con sus propios datos. Pide una consulta gratuita.'
+                        : 'AI agents, Power Automate, Power BI, Microsoft Fabric, and RPA so the operation answers from its own data. Request a free consultation.',
                 ]);
 
             case 'service':
@@ -227,8 +227,8 @@ class SEOService
                 'height' => 512,
             ],
             'description' => $locale === 'es'
-                ? 'Automatización de procesos y analítica de datos con Microsoft Power Platform'
-                : 'Process automation and data analytics with Microsoft Power Platform',
+                ? 'Agentes de IA sobre los procesos y los datos de la empresa, con Microsoft Power Platform'
+                : 'AI agents on a company’s processes and data, with Microsoft Power Platform',
             'foundingDate' => '2024',
             'address' => [
                 '@type' => 'PostalAddress',
@@ -244,16 +244,16 @@ class SEOService
                 'availableLanguage' => ['Spanish', 'English'],
             ],
             'knowsAbout' => [
-                'Cloud Computing',
-                'Digital Transformation',
-                'Automation',
+                'AI Agents',
+                'Copilot Studio',
                 'Artificial Intelligence',
-                'Business Process Optimization',
                 'Microsoft Power Platform',
                 'Power Automate',
                 'Power BI',
                 'Microsoft Fabric',
                 'RPA',
+                'Cloud Computing',
+                'Digital Transformation',
             ],
         ];
     }
@@ -276,8 +276,8 @@ class SEOService
             'image' => $baseUrl . '/images/logo.png',
             'logo' => $baseUrl . '/images/logo.png',
             'description' => $locale === 'es'
-                ? 'Automatización de procesos y analítica de datos con Microsoft Power Platform'
-                : 'Process automation and data analytics with Microsoft Power Platform',
+                ? 'Agentes de IA sobre los procesos y los datos de la empresa, con Microsoft Power Platform'
+                : 'AI agents on a company’s processes and data, with Microsoft Power Platform',
             'address' => [
                 '@type' => 'PostalAddress',
                 'addressLocality' => config('seo.address_locality'),
@@ -288,12 +288,12 @@ class SEOService
                 'name' => config('seo.address_country'),
             ],
             'knowsAbout' => [
+                'AI Agents',
+                'Copilot Studio',
                 'Microsoft Power Platform',
                 'Power Automate',
                 'Microsoft Fabric',
                 'Python Data Analytics',
-                'Cloud Computing',
-                'Digital Transformation',
             ],
             'availableLanguage' => ['Spanish', 'English'],
             'priceRange' => '$$',
